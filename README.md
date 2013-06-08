@@ -5,7 +5,7 @@ Puzzle-Bobble
 ![alt text](https://dl.dropboxusercontent.com/s/p9xwl7njco7oxaz/colisao.png?token_hash=AAF7RPQ1vfgs4jiI_KtstoEKI-hRknPhdEM-2r8Zz0wgTA&dl=1 "Puzzle Bobble")
 
 
-Small Open Gl / C++ Project for college that consists in a conceptual version of Puzzle Bobble game.
+Small OpenGl / C++ Project for college that consists in a conceptual version of Puzzle Bobble game.
 
 Features:
 * Custom levels
