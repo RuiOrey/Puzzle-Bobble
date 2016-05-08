@@ -247,7 +247,7 @@ function onTextureLoaded(texture) {
 
   var ballTop  = new THREE.Mesh( geometry, material );
 
-  ballTop.position.set(0.0, controls.userHeight + 35, -120.0);
+  ballTop.position.set(0.0, controls.userHeight + 45, -120.0);
 
   scene.add(ballTop);
 
@@ -257,13 +257,13 @@ function onTextureLoaded(texture) {
 
   var ballLeft = ballSide.clone();
 
-  ballLeft.position.set(35, controls.userHeight + 35 - 41.5, -120.0);
+  ballLeft.position.set(35, controls.userHeight + 45 - 41.5, -120.0);
 
   scene.add(ballLeft);
 
   var ballRight = ballSide.clone();
 
-  ballRight.position.set(-35, controls.userHeight + 35 - 41.5, -120.0);
+  ballRight.position.set(-35, controls.userHeight + 45 - 41.5, -120.0);
 
   scene.add(ballRight);
 
@@ -274,7 +274,7 @@ function onTextureLoaded(texture) {
   ballPlayer = new THREE.Mesh(geometry, material);
 
 // Position cube mesh to be right in front of you.
-  ballPlayer.position.set(0, controls.userHeight - 40, -120.0);
+  ballPlayer.position.set(0, controls.userHeight - 30, -120.0);
 
 // Add cube mesh to your three.js scene
   scene.add(ballPlayer);
@@ -411,15 +411,16 @@ function setStageDimensions(stage) {
     // Apply rotation to cube mesh
     if (analyser !== undefined )
       directionalLight.color = new THREE.Color(
-              (analyser.getData()[ 4 ] / 200),
-              (analyser.getData()[ 8 ] / 200),
+              Math.cos(_time * 0.0005) +(analyser.getData()[ 4 ] / 200),
+              Math.sin(_time * 0.0005) + (analyser.getData()[ 8 ] / 200),
               0
       );
 
     if (ballPlayer){
 
       ballPlayer.rotation.y += delta * 0.0006 ;
-      ballPlayer.material.color = new THREE.Color(Math.cos(_time * 0.005 * (analyser.getData()[ 4 ] / 200)),Math.sin(_time * 0.005) * (analyser.getData()[ 4 ] / 200),Math.cos(_time * 0.005 ) + Math.sin(_time * 0.005 ));
+      ballPlayer.material.color = new THREE.Color(Math.cos(_time * 0.005 ),Math.sin(_time * 0.005) ,(Math.cos(_time * 0.005 ) + Math.sin(_time * 0.005 ))/2);
+      ballPlayer.scale.set( 1+ (analyser.getData()[ 4 ] / 128),1+(analyser.getData()[ 4 ] / 128), 1+ (analyser.getData()[ 4 ] / 128));
     }
 
     // Update VR headset position and apply to camera.
