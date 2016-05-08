@@ -419,7 +419,7 @@ function setStageDimensions(stage) {
     if (ballPlayer){
 
       ballPlayer.rotation.y += delta * 0.0006 ;
-      ballPlayer.material.color = new THREE.Color(Math.cos(_time * 0.005),Math.sin(_time * 0.005),0);
+      ballPlayer.material.color = new THREE.Color(Math.cos(_time * 0.005 * (analyser.getData()[ 4 ] / 200)),Math.sin(_time * 0.005) * (analyser.getData()[ 4 ] / 200),Math.cos(_time * 0.005 ) + Math.sin(_time * 0.005 ));
     }
 
     // Update VR headset position and apply to camera.
