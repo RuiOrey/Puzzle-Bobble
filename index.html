@@ -471,8 +471,10 @@ function setStageDimensions(stage) {
       ballPlayer.scale.set( 1+ (analyser.getData()[ 4 ] / 128),1+(analyser.getData()[ 4 ] / 128), 1+ (analyser.getData()[ 4 ] / 128));
     }
 
-    if (pointer){
+    if ( pointer && mouseX ){
       pointer.rotation.z = Math.PI - mouseX/windowHalfX*2;
+      pointer.scale.set( 5 * ( 1 + (analyser.getData()[ 4 ] / 128) ), 5 * (1+(analyser.getData()[ 4 ] / 128)), 5 *(1 + (analyser.getData()[ 4 ] / 128)));
+
       console.log(mouseX);
     }
 
