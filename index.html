@@ -93,6 +93,9 @@ WebVRConfig = {
 <script src="webvr-boilerplate/build/webvr-manager.js"></script>
 
 
+<script src="webvr-boilerplate/node_modules/three/examples/js/loaders/OBJLoader.js"></script>
+
+
 <script>
 
 
@@ -100,7 +103,12 @@ WebVRConfig = {
 
   var mesh, skybox, ball;
 
-  var ballPlayer;
+  var mouseX,mouseY;
+
+  var windowHalfX = window.innerWidth / 2;
+  var windowHalfY = window.innerHeight / 2;
+
+  var ballPlayer, pointer;
 
   var paramsGame = {
 
@@ -165,6 +173,16 @@ effect.setSize(window.innerWidth, window.innerHeight);
 
 var loader = new THREE.TextureLoader();
 loader.load('models/textures/sky.png', onTextureLoaded);
+
+
+  var onProgress = function ( xhr ) {
+    if ( xhr.lengthComputable ) {
+      var percentComplete = xhr.loaded / xhr.total * 100;
+      console.log( Math.round(percentComplete, 2) + '% downloaded' );
+    }
+  };
+  var onError = function ( xhr ) {
+  };
 
 function onTextureLoaded(texture) {
 
@@ -280,7 +298,29 @@ function onTextureLoaded(texture) {
   scene.add(ballPlayer);
 
 
+  var manager = new THREE.LoadingManager();
+  manager.onProgress = function ( item, loaded, total ) {
+    console.log( item, loaded, total );
+  };
 
+
+  var loader2 = new THREE.OBJLoader( manager );
+  loader2.load( 'models/pointer.obj', function ( object ) {
+    object.traverse( function ( child ) {
+      if ( child instanceof THREE.Mesh ) {
+        child.material.map = texture;
+      }
+    } );
+    pointer = object;
+   object.position.set(ballPlayer.position.x,ballPlayer.position.y,ballPlayer.position.z);
+    pointer.scale.set(5,5,5);
+    pointer.rotation.z=Math.PI;
+
+    scene.add( object );
+  }, onProgress, onError  );
+
+
+  document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 
   /*
@@ -364,6 +404,11 @@ var lastRender = 0;
 
 
 function onResize(e) {
+
+
+  windowHalfX = window.innerWidth / 2;
+  windowHalfY = window.innerHeight / 2;
+
   effect.setSize(window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -399,7 +444,10 @@ function setStageDimensions(stage) {
 
 
 }
-
+  function onDocumentMouseMove( event ) {
+    mouseX = ( event.clientX - windowHalfX ) / 2;
+    mouseY = ( event.clientY - windowHalfY ) / 2;
+  }
 
   function animate(timestamp) {
 
@@ -421,6 +469,11 @@ function setStageDimensions(stage) {
       ballPlayer.rotation.y += delta * 0.0006 ;
       ballPlayer.material.color = new THREE.Color(Math.cos(_time * 0.005 ),Math.sin(_time * 0.005) ,(Math.cos(_time * 0.005 ) + Math.sin(_time * 0.005 ))/2);
       ballPlayer.scale.set( 1+ (analyser.getData()[ 4 ] / 128),1+(analyser.getData()[ 4 ] / 128), 1+ (analyser.getData()[ 4 ] / 128));
+    }
+
+    if (pointer){
+      pointer.rotation.z = Math.PI - mouseX/windowHalfX*2;
+      console.log(mouseX);
     }
 
     // Update VR headset position and apply to camera.
