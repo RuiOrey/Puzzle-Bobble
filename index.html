@@ -259,7 +259,7 @@ function onTextureLoaded(texture) {
 
   scene.add( skybox );
 
-  var material = new THREE.MeshPhongMaterial( { map:texture } );
+  var material = new THREE.MeshPhongMaterial( { envMap:textureEquirec } );
 
   geometry = new THREE.BoxGeometry( 70, 2, 2 );
 
@@ -321,6 +321,7 @@ function onTextureLoaded(texture) {
 
 
   document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  document.addEventListener( 'touchmove', onDocumentMouseMove, false );
 
 
   /*
