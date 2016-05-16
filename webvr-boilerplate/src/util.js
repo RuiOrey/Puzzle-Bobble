@@ -34,7 +34,7 @@ Util.isIOS = function() {
 };
 
 Util.isWPhone = function() {
-  return /(Windows Phone|iemobile|WPDesktop)/g.test(navigator.userAgent);
+  return /(Windows\sPhone|iemobile|WPDesktop)/g.test(navigator.userAgent);
 };
 
 Util.isIFrame = function() {
