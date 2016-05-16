@@ -272,6 +272,11 @@ Util.isIOS = function() {
   return /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 };
 
+//webvr-manager.js
+  Util.isWPhone = function() {
+    return /(Windows Phone|iemobile|WPDesktop)/g.test(navigator.userAgent);
+  };
+
 Util.isIFrame = function() {
   try {
     return window.self !== window.top;
