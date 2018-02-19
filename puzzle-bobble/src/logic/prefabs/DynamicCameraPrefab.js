@@ -1,6 +1,6 @@
 import React from 'react';
 import { Camera } from '../../render/Camera';
-import { isTraveler } from "../components/Traveler";
+import { isTraveler } from "../components/TravelerComponent";
 
 export class DynamicCameraPrefab extends Camera {
 

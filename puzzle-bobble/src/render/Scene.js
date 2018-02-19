@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import * as THREE from 'three';
 
 import { BoardPrefab } from "../logic/prefabs/BoardPrefab"
+import { SkyboxPrefab } from "../logic/prefabs/SkyBoxPrefab"
+import { ShooterPrefab } from "../logic/prefabs/ShooterPrefab"
 
 export class Scene extends Component {
 
@@ -12,8 +14,8 @@ export class Scene extends Component {
     componentDidMount() {
         //debug
         window.sceneChildren = this.children;
-        this.scene.fog = new THREE.Fog( 0xdddddd, 0.015, 200 );
-        this.initGrid();
+        // this.scene.fog = new THREE.Fog( 0x222222, 0.015, 200 );
+        //this.initGrid();
         this.initAxes();
         this.initLights();
     }
@@ -30,6 +32,9 @@ export class Scene extends Component {
         light.shadow.mapSize = new THREE.Vector2( 1024, 1024 );
 
         this.scene.add( light );
+
+        const ambient_light = new THREE.AmbientLight( 0x222222, 5 ); // soft white light
+        this.scene.add( ambient_light );
 
         // const light2 = new THREE.PointLight( 0xFFFFFF, 1, 100 );
         // light2.position.set( 0, 0, 0 );
@@ -60,6 +65,12 @@ export class Scene extends Component {
         this.scene.add( gridHelper );
     }
 
+    update = ()=> {
+        this.children.forEach( ( child )=> {
+            child.update();
+        } );
+    }
+
     initAxes() {
 
         const axesHelper = new THREE.AxesHelper( 5 );
@@ -75,6 +86,8 @@ export class Scene extends Component {
 
     render() {
         console.log( "Scene render props:", this.props );
-        return <div><BoardPrefab ref={this.addChild}></BoardPrefab>Scene</div>;
+        return <div><BoardPrefab ref={this.addChild}></BoardPrefab>
+            <ShooterPrefab ref={this.addChild}></ShooterPrefab>
+            <SkyboxPrefab ref={this.addChild}></SkyboxPrefab>Scene</div>;
     }
 }

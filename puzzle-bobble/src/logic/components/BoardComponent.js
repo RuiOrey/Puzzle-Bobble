@@ -44,11 +44,43 @@ export const isGridBoard = ( parent, parameters ) => {
 
         console.log( "building grid - _addBorder" );
 
+        let _parameters = {
+            skyboxType: "sphere",
+            texture: "/assets/img/sky.png",
+            radius: 100
+
+        };
+        let _texture;
         const border = new THREE.Object3D();
-        const material = new THREE.MeshPhysicalMaterial( { color: 0x0000ff } );
+        const material = new THREE.MeshPhysicalMaterial( { opacity: 0.8, transparent: true } );
 
 
-        const borderSideGeometry = new THREE.BoxGeometry( _dimensions.borderThickness, _dimensions.lines * _dimensions.scale + _dimensions.borderThickness );
+        const loader = new THREE.TextureLoader();
+
+        loader.load(
+            _parameters.texture,
+
+            function ( texture ) {
+                _texture = texture;
+                _texture.wrapS = THREE.MirroredRepeatWrapping;
+                //  texture.repeat.set( 0.2, 0.3 );
+                if ( material ) {
+                    material.envMap = texture;
+                    //material.color = new THREE.Color( 0.1, 0.1, 0.9 )
+                    material.map = texture;
+                    material.needsUpdate = true;
+
+
+                }
+            },
+            undefined,
+            function ( err ) {
+                console.error( 'An error loading texture happened.' );
+            }
+        );
+
+
+        const borderSideGeometry = new THREE.BoxGeometry( _dimensions.borderThickness, _dimensions.lines * _dimensions.scale );
         const borderTopGeometry = new THREE.BoxGeometry( _dimensions.columns * _dimensions.scale + _dimensions.borderThickness * 2, _dimensions.borderThickness );
 
 
@@ -183,7 +215,7 @@ export const isGridBoard = ( parent, parameters ) => {
             }
             _gridArray.push( _heightArray );
         }
-        console.log( _gridArray );
+        // console.log( _gridArray );
         // we should have an array with the boxes and they should be on gridObject
 
 
@@ -252,6 +284,5 @@ export const isGridBoard = ( parent, parameters ) => {
         slots: _gridArray,
         border: _border
     };
-    console.log( _gridArray );
     return { gridboard: state };
 }
