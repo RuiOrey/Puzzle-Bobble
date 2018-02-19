@@ -7,7 +7,7 @@ export const isGridBoard = ( parent, parameters ) => {
         scale: 2
     };
 
-    let _grid;
+    let _grid, _gridArray;
 
     function _clean() {
         console.log( "cleaning grid" );
@@ -30,35 +30,42 @@ export const isGridBoard = ( parent, parameters ) => {
         console.log( "building grid - _addPositions" );
     }
 
-    function _addDebugGrid() {
-
-        console.log( "building grid - _addDebugGrid" );
-
-
-        const size = 2000;
-        const divisions = 1000;
-
+    var _addGridBackgroundPlane = function () {
         const planeGeometry = new THREE.PlaneGeometry( _dimensions.lines * _dimensions.scale, _dimensions.columns * _dimensions.scale );
         //planeGeometry.rotateX( -Math.PI / 2 );
         const planeMaterial = new THREE.MeshPhongMaterial( {
             opacity: 0.8, transparent: true, depthWrite: false, color: 0xff0000
         } );
         const plane = new THREE.Mesh( planeGeometry, planeMaterial );
-        //plane.position.y = -0.1;
         plane.receiveShadow = true;
         plane.material.transparent = true;
         plane.renderOrder = 100;
-        _grid.add( plane );
+        return plane;
+    };
 
-        const gridHelper = createAGrid( {
+    function _addDebugGrid() {
+
+        console.log( "building grid - _addDebugGrid" );
+
+
+        const gridBackground = _addGridBackgroundPlane();
+        _grid.add( gridBackground );
+
+        const gridLines = createGridLines( {
             height: _dimensions.lines,
             width: _dimensions.columns,
             space: _dimensions.scale,
             color: 0x00ff00
         } );
-        //gridHelper.castShadow = true;
+        _grid.add( gridLines );
 
-        _grid.add( gridHelper );
+        const gridPositions = createGridPositions( {
+            height: _dimensions.lines,
+            width: _dimensions.columns,
+            space: _dimensions.scale,
+            color: 0x00ff00
+        } );
+        _grid.add( gridPositions );
 
     }
 
@@ -66,7 +73,7 @@ export const isGridBoard = ( parent, parameters ) => {
 // adapted from :
 // https://bocoup.com/blog/learning-three-js-with-real-world-challenges-that-have-already-been-solved
 //----------------------------------------------------------------------------
-    function createAGrid( opts ) {
+    function createGridLines( opts ) {
 
         var config = Object.assign( {
 
@@ -86,7 +93,7 @@ export const isGridBoard = ( parent, parameters ) => {
             gridGeo = new THREE.Geometry(),
             width = config.space * (config.width / 2),
             height = config.space * (config.height / 2),
-            step = config.space
+            step = config.space;
 
         //width
         for ( var i = -width; i <= width; i += step ) {
@@ -105,6 +112,58 @@ export const isGridBoard = ( parent, parameters ) => {
 
         return gridObject;
     }
+
+    function createGridPositions( opts ) {
+
+        const config = Object.assign( {
+
+
+            height: 500,
+            width: 500,
+            space: 10,
+            color: 0x00ff00
+        }, opts );
+
+        const material = new THREE.MeshBasicMaterial( {
+            color: config.color,
+            opacity: 0.7,
+            transparent: true
+        } );
+
+        _gridArray = [];
+        const gridObject = new THREE.Object3D(),
+            width = config.space * (config.width / 2),
+            height = config.space * (config.height / 2),
+            step = config.space;
+
+
+        const gridGeo = new THREE.BoxBufferGeometry( step - 0.1, step - 0.1 );
+
+        //for each line
+        for ( let x = -height + step / 2; x <= height - step / 2; x += step ) {
+            let _heightArray = [];
+            for ( let y = -width + step / 2; y <= width - step / 2; y += step ) {
+                const newGridPosition = new GridPosition( gridGeo, material );
+                _heightArray.push( newGridPosition );
+                gridObject.add( newGridPosition.mesh );
+                newGridPosition.mesh.position.set( x, y, 0 );
+            }
+            _gridArray.push( _heightArray );
+        }
+        // we should have an array with the boxes and they should be on gridObject
+
+
+        return gridObject;
+    }
+
+    function GridPosition( geometry, material ) {
+        this.mesh = new THREE.Mesh( geometry, material );
+        this.ball = null;
+    }
+
+    GridPosition.prototype.activate = function () {
+        this.mesh.material.color = 0xff0000;
+    };
 
 
     let state = {
