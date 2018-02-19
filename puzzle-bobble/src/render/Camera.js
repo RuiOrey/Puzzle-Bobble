@@ -18,7 +18,7 @@ export class Camera extends Component {
     };
 
     setupInitialValues() {
-        this.mesh.position.set( 8.3, 18.2, 25 );
+        this.mesh.position.set( 1, 1, 70 );
         //TODO - remove later - debug
 
         window.camera = this;
