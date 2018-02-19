@@ -23,7 +23,6 @@ export const isTraveler = ( object ) => {
             .to( _to, time )
             .easing( _easing )
             .onUpdate( function () {
-                console.log( _from );
                 _object.position.set( _from.x, _from.y, _from.z );
                 if ( _target ) {
                     _object.lookAt( _target );
@@ -37,7 +36,7 @@ export const isTraveler = ( object ) => {
     }
 
     function lookAt( target, time, parameters ) {
-        
+
         // backup original rotation
         const startRotation = new THREE.Euler().copy( _object.rotation );
 
@@ -64,16 +63,12 @@ export const isTraveler = ( object ) => {
             z: endRotation._z
         }
 
-        console.log( _from, _to );
-
         const tween = new TWEEN.Tween( _from ).to( _to, time ).onUpdate( function () {
-            //  console.log( _from.x );
             _object.rotation._x = _from.x;
             _object.rotation._y = _from.y;
             _object.rotation._z = _from.z;
             _object.rotation.fromArray( [ _from.x, _from.y
                 , _from.z ] );
-            //  console.log( _object.rotation );
 
         } )
             .onComplete( function () {

@@ -4,10 +4,11 @@ export const isGridBoard = ( parent, parameters ) => {
     let _dimensions = {
         lines: 10,
         columns: 7,
-        scale: 2
+        scale: 2,
+        borderThickness: 1
     };
 
-    let _grid, _gridArray = [];
+    let _grid, _border = { left: null, top: null, right: null }, _gridArray = [], _debug = new THREE.Object3D();
 
     function _clean() {
         console.log( "cleaning grid" );
@@ -20,6 +21,7 @@ export const isGridBoard = ( parent, parameters ) => {
         _grid = new THREE.Object3D();
         console.log( "building grid" );
         _addPositions();
+        _addBorder();
         _addDebugGrid();
         parent.mesh.add( _grid )
 
@@ -28,9 +30,71 @@ export const isGridBoard = ( parent, parameters ) => {
     function _addPositions() {
 
         console.log( "building grid - _addPositions" );
+
+        const gridPositions = createGridPositions( {
+            height: _dimensions.lines,
+            width: _dimensions.columns,
+            space: _dimensions.scale,
+            color: 0x00ff00
+        } );
+        _grid.add( gridPositions.mesh );
     }
 
-    var _addGridBackgroundPlane = function () {
+    function _addBorder() {
+
+        console.log( "building grid - _addBorder" );
+
+        const border = new THREE.Object3D();
+        const material = new THREE.MeshPhysicalMaterial( { color: 0x0000ff } );
+
+
+        const borderSideGeometry = new THREE.BoxGeometry( _dimensions.borderThickness, _dimensions.lines * _dimensions.scale + _dimensions.borderThickness );
+        const borderTopGeometry = new THREE.BoxGeometry( _dimensions.columns * _dimensions.scale + _dimensions.borderThickness * 2, _dimensions.borderThickness );
+
+
+        _border.left = new THREE.Mesh( borderSideGeometry, material );
+        _border.right = new THREE.Mesh( borderSideGeometry, material );
+        _border.top = new THREE.Mesh( borderTopGeometry, material );
+
+        const _sideDisplacement = 0.5 * _dimensions.columns * _dimensions.scale + _dimensions.borderThickness / 2;
+
+        border.add( _border.left );
+        _border.left.position.set( _sideDisplacement, 0, 0 );
+
+        border.add( _border.right );
+        _border.right.position.set( -_sideDisplacement, 0, 0 );
+
+        const _topDisplacement = 0.5 * _dimensions.lines * _dimensions.scale + _dimensions.borderThickness / 2;
+
+        border.add( _border.top );
+        _border.top.position.set( 0, _topDisplacement, 0 );
+
+        _grid.add( border );
+
+    }
+
+
+    function _addDebugGrid() {
+
+        console.log( "building grid - _addDebugGrid" );
+
+        _grid.add( _debug );
+        const gridBackground = _addGridBackgroundPlane();
+        _debug.add( gridBackground );
+
+        const gridLines = createGridLines( {
+            height: _dimensions.lines,
+            width: _dimensions.columns,
+            space: _dimensions.scale,
+            color: 0x00ff00
+        } );
+        _debug.add( gridLines );
+
+
+    }
+
+
+    const _addGridBackgroundPlane = function () {
         const planeGeometry = new THREE.PlaneGeometry( _dimensions.columns * _dimensions.scale, _dimensions.lines * _dimensions.scale );
         //planeGeometry.rotateX( -Math.PI / 2 );
         const planeMaterial = new THREE.MeshPhongMaterial( {
@@ -42,33 +106,6 @@ export const isGridBoard = ( parent, parameters ) => {
         plane.renderOrder = 100;
         return plane;
     };
-
-    function _addDebugGrid() {
-
-        console.log( "building grid - _addDebugGrid" );
-
-
-        const gridBackground = _addGridBackgroundPlane();
-        _grid.add( gridBackground );
-
-        const gridLines = createGridLines( {
-            height: _dimensions.lines,
-            width: _dimensions.columns,
-            space: _dimensions.scale,
-            color: 0x00ff00
-        } );
-        _grid.add( gridLines );
-
-
-        const gridPositions = createGridPositions( {
-            height: _dimensions.lines,
-            width: _dimensions.columns,
-            space: _dimensions.scale,
-            color: 0x00ff00
-        } );
-        _grid.add( gridPositions.mesh );
-
-    }
 
 //----------------------------------------------------------------------------
 // adapted from :
@@ -170,6 +207,10 @@ export const isGridBoard = ( parent, parameters ) => {
             activate: ( state, ball )=> {
                 this.ball = ball ? ball : null;
                 _mesh.material.color = new THREE.Color( this.state[ state ].color );
+            },
+            set visible( value ) {
+                _mesh.material.tranparent = value;
+                _mesh.material.opacity = value ? 0.8 : 0.0;
             }
         }
 
@@ -188,20 +229,28 @@ export const isGridBoard = ( parent, parameters ) => {
         dimensions: _dimensions,
         new: _new,
         set debug( value ) {
-            if ( !_grid ) {
+            if ( !_debug ) {
                 console.log( "debug is not defined" );
                 return;
             }
-            _grid.visible = value;
+
+            _gridArray.forEach( ( gridLine )=> {
+                gridLine.forEach( ( gridPosition ) => {
+                    gridPosition.visible = value;
+                } )
+            } );
+
+            _debug.visible = value;
         },
         get debug() {
-            if ( !_grid ) {
+            if ( !_debug ) {
                 console.log( "debug is not defined" );
                 return _grid;
             }
-            return _grid.visible;
+            return _debug.visible;
         },
-        slots: _gridArray
+        slots: _gridArray,
+        border: _border
     };
     console.log( _gridArray );
     return { gridboard: state };
