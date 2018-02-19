@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { Renderer } from "../../render/Renderer"
 
-class PuzzleBobble extends Component {
-  render()
-    {
-      return null;
+export class PuzzleBobble extends Component {
+    render() {
+        return <Renderer></Renderer>;
     }
 }
 
