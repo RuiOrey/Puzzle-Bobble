@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import * as THREE from 'three';
 
-class GameObject extends Component {
+export class GameObject extends Component {
 
-    pivot = new THREE.Object3D();
+    mesh = new THREE.Object3D();
     components = {};
     childGameObjects = [];
     id = '';
@@ -12,6 +12,7 @@ class GameObject extends Component {
     componentDidMount() {
         this.id = this.props.id;
         this.buildComponents();
+        this.initComponents();
     }
 
     _update = () => {
@@ -36,6 +37,9 @@ class GameObject extends Component {
     };
 
     buildComponents() {
+    }
+
+    initComponents() {
     }
 
     buildChildren = ( children ) => {
