@@ -13,6 +13,10 @@ export class GameObject extends Component {
         this.id = this.props.id;
         this.buildComponents();
         this.initComponents();
+        this.start();
+    }
+
+    start = ()=> {
     }
 
     _update = () => {

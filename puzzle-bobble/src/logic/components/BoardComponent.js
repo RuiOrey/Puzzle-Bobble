@@ -1,12 +1,7 @@
 import * as THREE from 'three';
+import { _dimensions } from '../../settings'
 
 export const isGridBoard = ( parent, parameters ) => {
-    let _dimensions = {
-        lines: 10,
-        columns: 10,
-        scale: 2,
-        borderThickness: 0.75
-    };
 
     let _grid, _border = { left: null, top: null, right: null }, _gridArray = [], _debug = new THREE.Object3D();
 
