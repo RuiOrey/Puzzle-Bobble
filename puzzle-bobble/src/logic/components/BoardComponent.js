@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { _dimensions } from '../../settings'
+import { dimensions } from '../../settings'
 
 export const isGridBoard = ( parent, parameters ) => {
 
@@ -27,9 +27,9 @@ export const isGridBoard = ( parent, parameters ) => {
         console.log( "building grid - _addPositions" );
 
         const gridPositions = createGridPositions( {
-            height: _dimensions.lines,
-            width: _dimensions.columns,
-            space: _dimensions.scale,
+            height: dimensions.lines,
+            width: dimensions.columns,
+            space: dimensions.scale,
             color: 0x00ff00
         } );
         _grid.add( gridPositions.mesh );
@@ -77,8 +77,8 @@ export const isGridBoard = ( parent, parameters ) => {
                     material.needsUpdate = true;
 
 
-                    const borderSideGeometry = new THREE.BoxGeometry( _dimensions.borderThickness, _dimensions.lines * _dimensions.scale );
-                    const borderTopGeometry = new THREE.BoxGeometry( _dimensions.columns * _dimensions.scale + _dimensions.borderThickness * 2, _dimensions.borderThickness );
+                    const borderSideGeometry = new THREE.BoxGeometry( dimensions.borderThickness, dimensions.lines * dimensions.scale );
+                    const borderTopGeometry = new THREE.BoxGeometry( dimensions.columns * dimensions.scale + dimensions.borderThickness * 2, dimensions.borderThickness );
 
 
                     _border.left = new THREE.Mesh( borderSideGeometry, material );
@@ -89,7 +89,7 @@ export const isGridBoard = ( parent, parameters ) => {
                     _border.right.scale.y = -1;
                     _border.top.scale.y = -1;
 
-                    const _sideDisplacement = 0.5 * _dimensions.columns * _dimensions.scale + _dimensions.borderThickness / 2;
+                    const _sideDisplacement = 0.5 * dimensions.columns * dimensions.scale + dimensions.borderThickness / 2;
 
                     border.add( _border.left );
                     _border.left.position.set( _sideDisplacement, 0, 0 );
@@ -97,7 +97,7 @@ export const isGridBoard = ( parent, parameters ) => {
                     border.add( _border.right );
                     _border.right.position.set( -_sideDisplacement, 0, 0 );
 
-                    const _topDisplacement = 0.5 * _dimensions.lines * _dimensions.scale + _dimensions.borderThickness / 2;
+                    const _topDisplacement = 0.5 * dimensions.lines * dimensions.scale + dimensions.borderThickness / 2;
 
                     border.add( _border.top );
                     _border.top.position.set( 0, _topDisplacement, 0 );
@@ -128,9 +128,9 @@ export const isGridBoard = ( parent, parameters ) => {
         _debug.add( gridBackground );
 
         const gridLines = createGridLines( {
-            height: _dimensions.lines,
-            width: _dimensions.columns,
-            space: _dimensions.scale,
+            height: dimensions.lines,
+            width: dimensions.columns,
+            space: dimensions.scale,
             color: 0x00ff00
         } );
         _debug.add( gridLines );
@@ -140,7 +140,7 @@ export const isGridBoard = ( parent, parameters ) => {
 
 
     const _addGridBackgroundPlane = function () {
-        const planeGeometry = new THREE.PlaneGeometry( _dimensions.columns * _dimensions.scale, _dimensions.lines * _dimensions.scale );
+        const planeGeometry = new THREE.PlaneGeometry( dimensions.columns * dimensions.scale, dimensions.lines * dimensions.scale );
         //planeGeometry.rotateX( -Math.PI / 2 );
         const planeMaterial = new THREE.MeshPhongMaterial( {
             opacity: 0.8, transparent: true, depthWrite: false, color: 0xff0000
@@ -271,7 +271,7 @@ export const isGridBoard = ( parent, parameters ) => {
 
 
     let state = {
-        dimensions: _dimensions,
+        dimensions: dimensions,
         new: _new,
         set debug( value ) {
             if ( !_debug ) {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { GameObject } from '../GameObject';
 import { isShooter } from "../components/ShooterComponent";
 import { isTraveler } from "../components/TravelerComponent";
-import { _dimensions } from '../../settings'
+import { dimensions } from '../../settings'
 
 export class ShooterPrefab extends GameObject {
 
@@ -15,7 +15,7 @@ export class ShooterPrefab extends GameObject {
     }
 
     start = () =>{
-        getPositionFromBoardDimensions(_dimensions);
+        this.mesh.position.copy( this.getPositionFromBoardDimensions(dimensions));
     }
 
     getPositionFromBoardDimensions = (settings) => {
