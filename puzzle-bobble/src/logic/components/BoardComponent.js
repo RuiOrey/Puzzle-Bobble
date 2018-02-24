@@ -3,9 +3,9 @@ import * as THREE from 'three';
 export const isGridBoard = ( parent, parameters ) => {
     let _dimensions = {
         lines: 10,
-        columns: 7,
+        columns: 10,
         scale: 2,
-        borderThickness: 1
+        borderThickness: 0.75
     };
 
     let _grid, _border = { left: null, top: null, right: null }, _gridArray = [], _debug = new THREE.Object3D();
@@ -52,26 +52,67 @@ export const isGridBoard = ( parent, parameters ) => {
         };
         let _texture;
         const border = new THREE.Object3D();
-        const material = new THREE.MeshPhysicalMaterial( { opacity: 0.8, transparent: true } );
+        const material = new THREE.MeshLambertMaterial( {
+            opacity: 0.8,
+            transparent: true,
+            metalness: .5,
+            roughness: 0
 
+        } );
 
         const loader = new THREE.TextureLoader();
 
-        loader.load(
-            _parameters.texture,
+        loader.load( _parameters.texture,
 
             function ( texture ) {
                 _texture = texture;
-                _texture.wrapS = THREE.MirroredRepeatWrapping;
-                //  texture.repeat.set( 0.2, 0.3 );
+                _texture.minFilter = THREE.LinearFilter;
+                _texture.magFilter = THREE.LinearFilter;
+                _texture.repeat.set( 1, 1 );
+
+                // _texture.wrapS = THREE.MirroredRepeatWrapping;
+                // _texture.wrapT = THREE.MirroredRepeatWrapping;
+
+
                 if ( material ) {
-                    material.envMap = texture;
-                    //material.color = new THREE.Color( 0.1, 0.1, 0.9 )
+                    material.color = new THREE.Color( 1, 1, 1 )
+                    // material.envMap = texture;
+
                     material.map = texture;
                     material.needsUpdate = true;
 
 
+                    const borderSideGeometry = new THREE.BoxGeometry( _dimensions.borderThickness, _dimensions.lines * _dimensions.scale );
+                    const borderTopGeometry = new THREE.BoxGeometry( _dimensions.columns * _dimensions.scale + _dimensions.borderThickness * 2, _dimensions.borderThickness );
+
+
+                    _border.left = new THREE.Mesh( borderSideGeometry, material );
+                    _border.right = new THREE.Mesh( borderSideGeometry, material );
+                    _border.top = new THREE.Mesh( borderTopGeometry, material );
+
+                    _border.left.scale.y = -1;
+                    _border.right.scale.y = -1;
+                    _border.top.scale.y = -1;
+
+                    const _sideDisplacement = 0.5 * _dimensions.columns * _dimensions.scale + _dimensions.borderThickness / 2;
+
+                    border.add( _border.left );
+                    _border.left.position.set( _sideDisplacement, 0, 0 );
+
+                    border.add( _border.right );
+                    _border.right.position.set( -_sideDisplacement, 0, 0 );
+
+                    const _topDisplacement = 0.5 * _dimensions.lines * _dimensions.scale + _dimensions.borderThickness / 2;
+
+                    border.add( _border.top );
+                    _border.top.position.set( 0, _topDisplacement, 0 );
+
+                    _grid.add( border );
+
+
                 }
+
+
             },
             undefined,
             function ( err ) {
@@ -79,29 +120,6 @@ export const isGridBoard = ( parent, parameters ) => {
             }
         );
 
-
-        const borderSideGeometry = new THREE.BoxGeometry( _dimensions.borderThickness, _dimensions.lines * _dimensions.scale );
-        const borderTopGeometry = new THREE.BoxGeometry( _dimensions.columns * _dimensions.scale + _dimensions.borderThickness * 2, _dimensions.borderThickness );
-
-
-        _border.left = new THREE.Mesh( borderSideGeometry, material );
-        _border.right = new THREE.Mesh( borderSideGeometry, material );
-        _border.top = new THREE.Mesh( borderTopGeometry, material );
-
-        const _sideDisplacement = 0.5 * _dimensions.columns * _dimensions.scale + _dimensions.borderThickness / 2;
-
-        border.add( _border.left );
-        _border.left.position.set( _sideDisplacement, 0, 0 );
-
-        border.add( _border.right );
-        _border.right.position.set( -_sideDisplacement, 0, 0 );
-
-        const _topDisplacement = 0.5 * _dimensions.lines * _dimensions.scale + _dimensions.borderThickness / 2;
-
-        border.add( _border.top );
-        _border.top.position.set( 0, _topDisplacement, 0 );
-
-        _grid.add( border );
 
     }
 
