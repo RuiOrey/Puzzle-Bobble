@@ -5,6 +5,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "^17.2.0",
     "jscs": "^3.0.7",
+    "nomnom": "^1.8.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
