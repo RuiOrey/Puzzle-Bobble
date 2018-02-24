@@ -3,6 +3,7 @@ import { GameObject } from '../GameObject';
 import { isShooter } from "../components/ShooterComponent";
 import { isTraveler } from "../components/TravelerComponent";
 import { dimensions } from '../../settings'
+import * as THREE from "three";
 
 export class ShooterPrefab extends GameObject {
 
@@ -19,10 +20,13 @@ export class ShooterPrefab extends GameObject {
     }
 
     getPositionFromBoardDimensions = (settings) => {
-        lines: 10,
-            columns: 10,
-            scale: 2,
-            borderThickness: 0.75
+        const _lines = settings.lines / 2;
+        const height = -(_lines * settings.scale);
+        return new THREE.Vector3(0, height, 0)
+        // lines: 10,
+        //     columns: 10,
+        //     scale: 2,
+        //     borderThickness: 0.75
     }
 
     initComponents() {
@@ -31,7 +35,7 @@ export class ShooterPrefab extends GameObject {
 
     update = ()=> {
 
-        this.mesh.rotation.y += 0.0001;
+        // this.mesh.rotation.z += 0.1;
     }
 
     render() {
