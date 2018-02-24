@@ -42,6 +42,8 @@ export const isShooter = ( object, parameters ) => {
         }
     );
 
+    initEvents(object);
+
 
     let state = {
         mesh: _parameters.mesh
@@ -52,3 +54,16 @@ export const isShooter = ( object, parameters ) => {
     };
 }
 
+
+function initEvents(object) {
+    object.mesh.rotation.z = Math.PI;
+    document.addEventListener("moveright", function () {
+        object.mesh.rotation.z -=0.1;
+    });
+    document.addEventListener("moveleft", function () {
+        object.mesh.rotation.z +=0.1;
+    });
+    document.addEventListener("shoot", function () {
+        console.log('shoot');
+    });
+}
