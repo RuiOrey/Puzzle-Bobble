@@ -102,6 +102,27 @@ function getLowerHeightPositionFromBoardDimensions( settings )
     return new THREE.Vector3( 0, height, 0 );
   };
 
+let animateShoot = function( object ) {
+  let scale = {scale: dimensions.scale + 0};
+
+  let target = {scale: dimensions.scale * 1.05};
+
+  const tweenA = new TWEEN.Tween( scale ).to( target, 100 );
+  const tweenB = new TWEEN.Tween( target ).to( dimensions, 100 );
+  tweenA.onUpdate( () => {
+
+    object.mesh.scale.set( scale.scale, scale.scale, scale.scale );
+  } );
+  tweenB.onUpdate( () => {
+
+    object.mesh.scale.set( target.scale, target.scale, target.scale );
+  } );
+
+  tweenA.chain( tweenB );
+
+  tweenA.start();
+};
+
 function initEventListeners( object, parameters )
   {
     document.addEventListener( 'moveright', function() {
@@ -120,11 +141,11 @@ function initEventListeners( object, parameters )
         }
       object.mesh.rotation.z += parameters.rotation.speed;
     } );
+
     document.addEventListener( 'shoot', function() {
-      console.log( 'shoot' );
+      animateShoot( object );
     } );
   }
-
 
 let setParentGameObjectTransforms = function( object, _parameters ) {
   object.mesh.position.copy(
