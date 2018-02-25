@@ -15,19 +15,7 @@ export class ShooterPrefab extends GameObject {
         Object.assign( this, isTraveler( this.mesh ) );
     }
 
-    start = () =>{
-        this.mesh.position.copy( this.getPositionFromBoardDimensions(dimensions));
-    }
 
-    getPositionFromBoardDimensions = (settings) => {
-        const _lines = settings.lines / 2;
-        const height = -(_lines * settings.scale);
-        return new THREE.Vector3(0, height, 0)
-        // lines: 10,
-        //     columns: 10,
-        //     scale: 2,
-        //     borderThickness: 0.75
-    }
 
     initComponents() {
         //this.mesh.add( this.components.skybox.mesh );
