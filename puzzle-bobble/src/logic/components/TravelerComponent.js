@@ -76,7 +76,7 @@ export const isTraveler = ( object ) => {
             } ).start();
     }
 
-    let state = {
+    const state = {
         travelTo: travelTo,
         lookAt: lookAt
     };
