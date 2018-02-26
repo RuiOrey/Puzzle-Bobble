@@ -189,7 +189,7 @@ export const isGridBoard = ( parent, parameters ) =>
                     step = config.space;
 
                 //width
-                for ( let i = -width; i <= width; i += step )
+                for ( let i = -width; i <= width; i += step / 2 )
                     {
                         gridGeo.vertices.push( new THREE.Vector3( i, -height, 0 ) );
                         gridGeo.vertices.push( new THREE.Vector3( i, height, 0 ) );
@@ -228,16 +228,21 @@ export const isGridBoard = ( parent, parameters ) =>
                 // const gridGeo = new THREE.BoxGeometry( step - 0.1, step - 0.1 );
                 const gridGeo = new THREE.SphereGeometry( (step - 0.1) / 2 );
 
+                let _currentLine = 0;
                 //for each line
-                for ( let x = -height + step / 2; x <= height - step / 2; x += step )
+                for ( let y = -height + step / 2; y <= height - step / 2; y += step )
                     {
                         let _heightArray = [];
-                        for ( let y = -width + step / 2; y <= width - step / 2; y += step )
+                        const _currentLineIsEven = _currentLine === 0 || _currentLine % 2 === 0;
+                        const _offset = _currentLineIsEven ? step / 2 : 0;
+                        console.log( _offset );
+                        _currentLine++;
+                        for ( let x = -width + (step / 2) + _offset; x <= width - step / 2; x += step )
                             {
                                 const newGridPosition = new GridPosition( gridGeo, config.color );
                                 _heightArray.push( newGridPosition );
                                 gridObject.add( newGridPosition.mesh );
-                                newGridPosition.mesh.position.set( y, x, 0 );
+                                newGridPosition.mesh.position.set( x, y, 0 );
                             }
                         _gridArray.push( _heightArray );
                     }
@@ -297,7 +302,7 @@ export const isGridBoard = ( parent, parameters ) =>
                 let _randomSlotLineID = Math.floor( Math.random() *
                     (_gridArray.length ) );
                 let _randomSlotColumnID = Math.floor( Math.random() *
-                    (_gridArray[ 0 ].length ) );
+                    (_gridArray[ _randomSlotLineID ].length ) );
 
                 const _stateID = Object.keys( GridPosition.prototype.state );
 
