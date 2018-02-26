@@ -8,33 +8,37 @@ export class Camera extends Component {
         fov: 45,
         aspect: window.innerWidth / window.innerHeight,
         near: .1,
-        far: 1000
+        far: 10000
     };
     mesh = new THREE.PerspectiveCamera( this.attribs.fov, this.attribs.aspect, this.attribs.near, this.attribs.far );
 
-    componentDidMount() {
-        this.setupInitialValues();
-        this.setupResize();
-    };
+    componentDidMount()
+        {
+            this.setupInitialValues();
+            this.setupResize();
+        };
 
-    setupInitialValues() {
-        this.mesh.position.set( 1, 1, 70 );
-        //TODO - remove later - debug
+    setupInitialValues()
+        {
+            this.mesh.position.set( 1, 1, 70 );
+            //TODO - remove later - debug
 
-        window.camera = this;
-        window.THREE = THREE;
-    }
+            window.camera = this;
+            window.THREE = THREE;
+        }
 
-    setupResize() {
-        window.addEventListener( "resize", () => {
-            //      console.log( "adjusting camera", this.camera )
-            this.mesh.aspect = window.innerWidth / window.innerHeight;
-            this.mesh.updateProjectionMatrix();
-        } );
-    }
+    setupResize()
+        {
+            window.addEventListener( "resize", () =>
+            {
+                //      console.log( "adjusting camera", this.camera )
+                this.mesh.aspect = window.innerWidth / window.innerHeight;
+                this.mesh.updateProjectionMatrix();
+            } );
+        }
 
-
-    render() {
-        return <div>Camera</div>;
-    }
+    render()
+        {
+            return <div>Camera</div>;
+        }
 }
