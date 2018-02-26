@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { GameObject } from '../GameObject';
 import { isShooter } from "../components/ShooterComponent";
 import { isTraveler } from "../components/TravelerComponent";
-import { dimensions } from '../../settings'
-import * as THREE from "three";
 
 export class ShooterPrefab extends GameObject {
 

@@ -27,21 +27,23 @@ export class GameObject extends Component {
     this.update();
   };
 
-  updateChildren()
-    {
-      this.childGameObjects.forEach( ( gameobject ) => {
-        gameobject._update();
-      } );
-    }
+  updateChildren = () => {
+    this.childGameObjects.forEach( ( gameobject ) => {
+      gameobject._update();
+    } );
+  };
 
-  updateComponents()
-    {
-      for ( const componentID in this.components )
-        {
-          this.components[componentID]._update(
-              this.props.components[componentID] );
-        }
-    }
+  updateComponents = () => {
+    for ( const componentID in this.components )
+      {
+        if ( this.components[componentID].update )
+          {
+            this.components[componentID].update(
+                //    this.props.components[componentID]
+            );
+          }
+      }
+  };
 
   update = () => {
   };
