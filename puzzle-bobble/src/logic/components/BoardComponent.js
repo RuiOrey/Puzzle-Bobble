@@ -221,7 +221,8 @@ export const isGridBoard = ( parent, parameters ) => {
           height = config.space * (config.height / 2),
           step = config.space;
 
-      const gridGeo = new THREE.BoxGeometry( step - 0.1, step - 0.1 );
+      // const gridGeo = new THREE.BoxGeometry( step - 0.1, step - 0.1 );
+      const gridGeo = new THREE.SphereGeometry( (step - 0.1) / 2 );
 
       //for each line
       for ( let x = -height + step / 2; x <= height - step / 2; x += step )
