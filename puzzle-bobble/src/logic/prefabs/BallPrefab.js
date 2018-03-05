@@ -3,7 +3,7 @@ import { GameObject } from '../GameObject';
 
 import { isTraveler } from '../components/TravelerComponent';
 import { isBall } from '../components/BallComponent';
-import { hasPhysics } from '../components/PhysicsComponent';
+import { hasCollisions } from '../components/CollisionComponent';
 
 class BallPrefab extends GameObject {
 
@@ -12,7 +12,7 @@ class BallPrefab extends GameObject {
         this.parameters = Object.assign( { ball: {} }, this.parameters );
         Object.assign( this.components, isBall( this, this.parameters.ball ) );
         Object.assign( this, isTraveler( this.mesh ) );
-        Object.assign( this, hasPhysics( this, "sphere" ) );
+        Object.assign( this, hasCollisions( this, "sphere" ) );
     };
 
     render() {

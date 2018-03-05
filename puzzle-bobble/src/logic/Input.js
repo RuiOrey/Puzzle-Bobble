@@ -2,15 +2,8 @@ import React, {Component} from 'react';
 
 export class Input extends Component {
 
-  events: {
-    'ArrowLeft': 'moveleft',
-    'ArrowUp': 'moveright'
-  };
-
   componentDidMount()
     {
-
-      ;
 
       document.addEventListener( 'keydown', function( event ) {
         console.log( 'Pressed: ', event.keyCode );
@@ -18,8 +11,6 @@ export class Input extends Component {
         if ( event.key === 'ArrowLeft' )
           {
             document.dispatchEvent( new Event( 'moveleft' )
-                ,
-                false,
             )
             ;
           }
@@ -27,20 +18,19 @@ export class Input extends Component {
         if ( event.key === 'ArrowRight' )
           {
             document.dispatchEvent( new Event( 'moveright' )
-                ,
-                false,
+
             )
             ;
           }
 
         if ( event.keyCode === 32 )
           {
-            document.dispatchEvent( new Event( 'shoot' ), false );
+            document.dispatchEvent( new Event( 'shoot' ) );
           }
 
         if ( event.keyCode === 67 )
           {
-            document.dispatchEvent( new Event( 'camera_change' ), false );
+            document.dispatchEvent( new Event( 'camera_change' ) );
           }
       } );
     }
