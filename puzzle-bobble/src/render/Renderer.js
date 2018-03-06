@@ -7,10 +7,13 @@ import * as THREE from 'three';
 import { Scene } from './Scene';
 import { DynamicCameraPrefab } from '../logic/prefabs/DynamicCameraPrefab';
 
+import { PhysicsManager } from '../logic/PhysicsManager';
+
 // import { Controls } from './Controls';
 
 export class Renderer extends Component {
 
+    physicsManager;
     registeredUpdates = [];
     renderer = new THREE.WebGLRenderer( {
         alpha: true,
@@ -47,6 +50,10 @@ export class Renderer extends Component {
     }
 
     renderLoop = ( timeRenderLoopWasCalled ) => {
+
+        if ( this.physicsManager ) {
+            this.physicsManager.update( timeRenderLoopWasCalled );
+        }
         this.updateChildren( timeRenderLoopWasCalled, this.children );
         this.renderer.render( this.scene, this.camera );
         TWEEN.update( timeRenderLoopWasCalled );
@@ -58,7 +65,7 @@ export class Renderer extends Component {
             return;
         }
         children.forEach( ( child ) => {
-            child.update ? child.update() : null;
+            child.update ? child.update( timeRenderLoopWasCalled ) : null;
             child.children ? this.updateChildren( timeRenderLoopWasCalled, child.children ) : null;
         } )
     }
@@ -124,21 +131,16 @@ export class Renderer extends Component {
         }
     }
 
-    registerUpdatePipe = ( updatePipeFunction ) => {
-        this.updatePipe = updatePipeFunction;
+
+    setPhysics = ( physicsManager ) => {
+
+        this.physicsManager = physicsManager;
     }
 
-    pipeUpdated = ( params ) => {
-        this.updatePipe( params );
+    getPhysicsManager = () => {
+        return this.physicsManager;
     }
 
-    registerUpdateFlareTip = ( updateFlareTip ) => {
-        this.updateFlareTip = updateFlareTip;
-    }
-
-    flareTipUpdated = ( params ) => {
-        this.updateFlareTip( params );
-    }
 
     render() {
         let _children = [];
@@ -147,8 +149,9 @@ export class Renderer extends Component {
         //                         ref={ui => this.setUI( ui )} key="testForUpdate4"></DatGui> );
         _children.push( <DynamicCameraPrefab ref={camera => this.setCamera( camera )}
                                              key="testForUpdate"></DynamicCameraPrefab> );
-        _children.push( <Scene registerUpdatePipe={this.registerUpdatePipe}
-                               registerUpdateFlareTip={this.registerUpdateFlareTip}
+        _children.push( <PhysicsManager ref={physicsManager => this.setPhysics( physicsManager )}
+                                        key="physicsManager"></PhysicsManager> );
+        _children.push( <Scene getPhysicsManager={this.getPhysicsManager}
                                parameters={this.sceneParameters} ref={scene => this.setScene( scene )}
                                key="testForUpdate2"></Scene> );
         // _children.push( <Controls ref={controls => this.setControls( controls )} key="testForUpdate3"></Controls> );
