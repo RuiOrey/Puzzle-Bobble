@@ -10,9 +10,9 @@ class BallPrefab extends GameObject {
     buildComponents = () => {
         this.parameters = this.props.parameters ? this.props.parameters : {};
         this.parameters = Object.assign( { ball: {} }, this.parameters );
-        Object.assign( this.components, isBall( this, this.parameters.ball ) );
         Object.assign( this, isTraveler( this.mesh ) );
         Object.assign( this, hasCollisions( this, "sphere" ) );
+        Object.assign( this.components, isBall( this, this.parameters.ball ) );
     };
 
     render() {

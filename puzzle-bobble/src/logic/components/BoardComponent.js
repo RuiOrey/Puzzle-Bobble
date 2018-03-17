@@ -3,7 +3,7 @@ import { dimensions } from '../../settings';
 
 export const isGridBoard = ( gameObject, parameters ) => {
 
-    let _grid, _border = { left: null, top: null, right: null }, _gridArray = [],
+    let _grid, _border = { left: {}, top: {}, right: {} }, _gridArray = [],
         _debug = new THREE.Object3D();
 
     function _clean() {
@@ -37,6 +37,13 @@ export const isGridBoard = ( gameObject, parameters ) => {
     }
 
     function _addBorder() {
+        const config = Object.assign( {
+
+            height: 500,
+            width: 500,
+            space: 10,
+            color: 0x00ff00,
+        }, {} );
 
         console.log( 'building grid - _addBorder' );
 
@@ -83,30 +90,94 @@ export const isGridBoard = ( gameObject, parameters ) => {
                         dimensions.scale + dimensions.borderThickness * 2,
                         dimensions.borderThickness );
 
-                    _border.left = new THREE.Mesh( borderSideGeometry, material );
-                    _border.right = new THREE.Mesh( borderSideGeometry, material );
-                    _border.top = new THREE.Mesh( borderTopGeometry, material );
+                    _border.left.mesh = new THREE.Mesh( borderSideGeometry, material );
+                    _border.right.mesh = new THREE.Mesh( borderSideGeometry, material );
+                    _border.top.mesh = new THREE.Mesh( borderTopGeometry, material );
 
-                    _border.left.scale.y = -1;
-                    _border.right.scale.y = -1;
-                    _border.top.scale.y = -1;
+                    _border.left.mesh.scale.y = -1;
+                    _border.right.mesh.scale.y = -1;
+                    _border.top.mesh.scale.y = -1;
 
                     const _sideDisplacement = 0.5 * dimensions.columns *
                         dimensions.scale + dimensions.borderThickness / 2;
 
-                    border.add( _border.left );
-                    _border.left.position.set( _sideDisplacement, 0, 0 );
+                    border.add( _border.left.mesh );
+                    _border.left.mesh.position.set( _sideDisplacement, 0, 0 );
 
-                    border.add( _border.right );
-                    _border.right.position.set( -_sideDisplacement, 0, 0 );
+                    border.add( _border.right.mesh );
+                    _border.right.mesh.position.set( -_sideDisplacement, 0, 0 );
 
                     const _topDisplacement = 0.5 * dimensions.lines *
                         dimensions.scale + dimensions.borderThickness / 2;
 
-                    border.add( _border.top );
-                    _border.top.position.set( 0, _topDisplacement, 0 );
+                    border.add( _border.top.mesh );
+                    _border.top.mesh.position.set( 0, _topDisplacement, 0 );
 
                     _grid.add( border );
+
+                    // physics
+
+                   _border.left.physicsObject = gameObject.props.getPhysicsManager().addNewBoxBody( _border.left.mesh, {
+                       mass: 0,
+                       position: { x: _sideDisplacement, y: 0, z: 0 },
+                       dimensions: {
+                           x:dimensions.borderThickness,
+                           y:dimensions.lines * dimensions.scale,
+                           z:dimensions.borderThickness*100
+                       }
+                        } )
+                        ;
+
+                   _border.right.physicsObject = gameObject.props.getPhysicsManager().addNewBoxBody( _border.right.mesh, {
+                       mass: 0,
+
+                       position: { x: -_sideDisplacement, y: 0, z: 0 },
+                       dimensions: {
+                           x:dimensions.borderThickness,
+                           y:dimensions.lines * dimensions.scale,
+                           z:dimensions.borderThickness*1010
+                       }
+                        } )
+                        ;
+                   _border.top.physicsObject = gameObject.props.getPhysicsManager().addNewBoxBody( _border.top.mesh, {
+                       mass: 0,
+                       position: { x: 0, y: _topDisplacement, z: 0 },
+                       dimensions: {
+                           x: dimensions.columns * dimensions.scale + dimensions.borderThickness * 2,
+                           y:dimensions.borderThickness,
+                           z:dimensions.borderThickness
+                       }
+                        } )
+                        ;
+
+                    _border.back = {};
+
+                    let step = config.space;
+
+                    // const gridGeo = new THREE.BoxGeometry( step - 0.1, step - 0.1 );
+                    const gridGeoRadius = (step - 0.1) / 2;
+
+                    _border.back = gameObject.props.getPhysicsManager().addNewBoxBody( undefined, {
+                        mass: 0,
+                        position: { x: 0, y: 0, z: gridGeoRadius/2 },
+                        dimensions: {
+                            x:1000,
+                            y:1000,
+                            z:0.1
+                        }
+                    } )
+                    ;
+
+                    _border.back = gameObject.props.getPhysicsManager().addNewBoxBody( undefined, {
+                        mass: 0,
+                        position: { x: 0, y: 0, z: -gridGeoRadius/2 },
+                        dimensions: {
+                            x:1000,
+                            y:1000,
+                            z:0.1
+                        }
+                    } )
+                    ;
 
                 }
 
@@ -231,7 +302,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
             }
             _gridArray.push( _heightArray );
         }
-        
+
         // console.log( _gridArray );
         // we should have an array with the boxes and they should be on gridObject
 
@@ -248,7 +319,6 @@ export const isGridBoard = ( gameObject, parameters ) => {
         } );
         const _mesh = new THREE.Mesh( geometry, material );
         this.ball = null;
-
         const _physicsRepresentation = gameObject.props.getPhysicsManager().addNewSphereBody( _mesh, {
                 radius: radius,
                 position: position,
@@ -296,6 +366,12 @@ export const isGridBoard = ( gameObject, parameters ) => {
                 gridElement.physicsObject.update();
                 //gridElement.physicsObject ? gridElement.physicsObject.update() : null;
             } )
+        } );
+
+        console.log(_border);
+        Object.keys( _border).forEach( ( key )=> {
+            _border[key].physicsObject ? _border[key].physicsObject.update():null;
+                //gridElement.physicsObject ? gridElement.physicsObject.update() : null;
         } );
     }
 

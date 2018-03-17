@@ -56,16 +56,16 @@ export class PhysicsManager extends Component {
 
     addNewBoxBody( mesh, parameters ) {
 
-        let thisSphereParameters = {
+        let thisBoxParameters = {
             mass: 1,
             position: { x: 0, y: 0, z: 0 },
             dimensions: { x: 1, y: 1, z: 1 }
         };
 
-        const _parameters = Object.assign( thisSphereParameters, parameters );
+        const _parameters = Object.assign( thisBoxParameters, parameters );
 
         const _boxBody = new CANNON.Body( {
-            mass: 1,
+            mass: _parameters.mass,
             position: new CANNON.Vec3( _parameters.position.x, _parameters.position.y, _parameters.position.z ), // m
             shape: new CANNON.Box( new CANNON.Vec3( 1, 1, 1 ) )
         } );
