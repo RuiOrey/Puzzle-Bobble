@@ -28,12 +28,18 @@ export class PhysicsManager extends Component {
         }
     }
 
+    Vec3 = (x,y,z) =>   {
+        return new CANNON.Vec3(x,y,z);
+    }
+
     addNewSphereBody( mesh, parameters ) {
 
         let thisSphereParameters = {
             mass: 5,
             position: { x: 0, y: 0, z: 0 },
-            radius: 1
+            radius: 1,
+            linearFactor: new  CANNON.Vec3(1,1,1),
+            angularFactor: new  CANNON.Vec3(1,1,1)
         };
 
         const _parameters = Object.assign( thisSphereParameters, parameters );
@@ -41,7 +47,10 @@ export class PhysicsManager extends Component {
         const _sphereBody = new CANNON.Body( {
             mass: _parameters.mass, // kg
             position: new CANNON.Vec3( _parameters.position.x, _parameters.position.y, _parameters.position.z ), // m
-            shape: new CANNON.Sphere( _parameters.radius )
+            shape: new CANNON.Sphere( _parameters.radius ),
+            linearFactor : _parameters.linearFactor,
+            angularFactor : _parameters.angularFactor
+
         } );
         this.world.addBody( _sphereBody );
 
@@ -59,7 +68,9 @@ export class PhysicsManager extends Component {
         let thisBoxParameters = {
             mass: 1,
             position: { x: 0, y: 0, z: 0 },
-            dimensions: { x: 1, y: 1, z: 1 }
+            dimensions: { x: 1, y: 1, z: 1 },
+            linearFactor: new  CANNON.Vec3(1,1,1),
+            angularFactor: new  CANNON.Vec3(1,1,1)
         };
 
         const _parameters = Object.assign( thisBoxParameters, parameters );
@@ -67,7 +78,9 @@ export class PhysicsManager extends Component {
         const _boxBody = new CANNON.Body( {
             mass: _parameters.mass,
             position: new CANNON.Vec3( _parameters.position.x, _parameters.position.y, _parameters.position.z ), // m
-            shape: new CANNON.Box( new CANNON.Vec3( 1, 1, 1 ) )
+            shape: new CANNON.Box( new CANNON.Vec3( _parameters.dimensions.x, _parameters.dimensions.y, _parameters.dimensions.z ) ),
+            linearFactor : _parameters.linearFactor,
+            angularFactor : _parameters.angularFactor
         } );
 
         this.world.addBody( _boxBody );
