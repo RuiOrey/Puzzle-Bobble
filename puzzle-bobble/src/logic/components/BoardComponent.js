@@ -123,7 +123,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
                     const _physicsManager = gameObject.props.getPhysicsManager();
 
                    _border.left.physicsObject = _physicsManager.addNewBoxBody( _border.left.mesh, {
-                        mass: 0,
+                        mass: 5,
                        position: { x: _sideDisplacement, y: 0, z: 0 },
                        dimensions: {
                            x:dimensions.borderThickness,
@@ -145,8 +145,8 @@ export const isGridBoard = ( gameObject, parameters ) => {
                         } )
                         ;
 
-                   _border.top.physicsObject = _physicsManager.addNewBoxBody( _border.top.mesh, {
-                       mass: 0,
+                    _border.top.physicsObject = _physicsManager.addNewBoxBody( _border.top.mesh, {
+                       mass: 5,
                        position: { x: 0, y: _topDisplacement, z: 0 },
                        dimensions: {
                            x: dimensions.columns * dimensions.scale + dimensions.borderThickness * 2,
@@ -311,7 +311,6 @@ export const isGridBoard = ( gameObject, parameters ) => {
                 mass: Math.random() > 0.2 ? 50 : 0,
                 linearFactor: new  _physicsManager.Vec3(1,1,0),
                 angularFactor: new  _physicsManager.Vec3(1,1,0)
-
             } )
             ;
 

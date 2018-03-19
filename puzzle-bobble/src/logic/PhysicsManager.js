@@ -5,7 +5,8 @@ import * as CANNON from 'cannon';
 export class PhysicsManager extends Component {
 
     world = new CANNON.World( {
-        gravity: new CANNON.Vec3( 0, -9.82, 0 )
+        // gravity: new CANNON.Vec3( 0, -9.82, 0 )
+        gravity: new CANNON.Vec3( 0, 0, 0 )
     } );
     fixedTimeStep = 1.0 / 60.0; // seconds
     maxSubSteps = 3;
@@ -31,6 +32,7 @@ export class PhysicsManager extends Component {
     Vec3 = (x,y,z) =>   {
         return new CANNON.Vec3(x,y,z);
     }
+    
 
     addNewSphereBody( mesh, parameters ) {
 

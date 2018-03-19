@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { BoardPrefab } from '../logic/prefabs/BoardPrefab';
 import { SkyboxPrefab } from '../logic/prefabs/SkyBoxPrefab';
 import { ShooterPrefab } from '../logic/prefabs/ShooterPrefab';
+import {BallPrefab} from '../logic/prefabs/BallPrefab';
 
 export class Scene extends Component {
 
@@ -83,10 +84,13 @@ export class Scene extends Component {
         }
         this.children.push( child );
     };
+    
+
 
     render() {
         console.log( 'Scene render props:', this.props );
         return <div>
+            <BallPrefab  getGameDirector={this.props.getGameDirector} getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></BallPrefab>
             <BoardPrefab  getGameDirector={this.props.getGameDirector} getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></BoardPrefab>
             <ShooterPrefab  getGameDirector={this.props.getGameDirector} getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></ShooterPrefab>
             <SkyboxPrefab  getGameDirector={this.props.getGameDirector} getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></SkyboxPrefab>Scene
