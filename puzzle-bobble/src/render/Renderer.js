@@ -8,6 +8,7 @@ import { Scene } from './Scene';
 import { DynamicCameraPrefab } from '../logic/prefabs/DynamicCameraPrefab';
 
 import { PhysicsManager } from '../logic/PhysicsManager';
+import { GameDirector } from '../logic/GameDirector';
 
 // import { Controls } from './Controls';
 
@@ -53,6 +54,10 @@ export class Renderer extends Component {
 
         if ( this.physicsManager ) {
             this.physicsManager.update( timeRenderLoopWasCalled );
+        }
+
+        if ( this.gameDirector ) {
+            this.gameDirector.update( timeRenderLoopWasCalled );
         }
         this.updateChildren( timeRenderLoopWasCalled, this.children );
         this.renderer.render( this.scene, this.camera );
@@ -142,6 +147,16 @@ export class Renderer extends Component {
     }
 
 
+    setGameDirector = ( gameDirector ) => {
+
+        this.gameDirector = gameDirector;
+    }
+
+    getGameDirector = () => {
+        return this.gameDirector;
+    }
+
+
     render() {
         let _children = [];
         this.children = [];
@@ -151,7 +166,10 @@ export class Renderer extends Component {
                                              key="testForUpdate"></DynamicCameraPrefab> );
         _children.push( <PhysicsManager ref={physicsManager => this.setPhysics( physicsManager )}
                                         key="physicsManager"></PhysicsManager> );
+        _children.push( <GameDirector ref={gameDirector => this.setGameDirector( gameDirector )}
+                                        key="gameDirector"></GameDirector> );
         _children.push( <Scene getPhysicsManager={this.getPhysicsManager}
+                               getGameDirector={this.getGameDirector}
                                parameters={this.sceneParameters} ref={scene => this.setScene( scene )}
                                key="testForUpdate2"></Scene> );
         // _children.push( <Controls ref={controls => this.setControls( controls )} key="testForUpdate3"></Controls> );

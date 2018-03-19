@@ -86,9 +86,10 @@ export class Scene extends Component {
 
     render() {
         console.log( 'Scene render props:', this.props );
-        return <div><BoardPrefab getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></BoardPrefab>
-            <ShooterPrefab getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></ShooterPrefab>
-            <SkyboxPrefab getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></SkyboxPrefab>Scene
+        return <div>
+            <BoardPrefab  getGameDirector={this.props.getGameDirector} getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></BoardPrefab>
+            <ShooterPrefab  getGameDirector={this.props.getGameDirector} getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></ShooterPrefab>
+            <SkyboxPrefab  getGameDirector={this.props.getGameDirector} getPhysicsManager={this.props.getPhysicsManager} ref={this.addChild}></SkyboxPrefab>Scene
         </div>;
     }
 }
