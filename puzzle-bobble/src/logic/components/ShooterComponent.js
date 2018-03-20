@@ -9,7 +9,7 @@ export const isShooter = ( object, parameters ) => {
 
   let _parameters = {
     shooterType: 'arrow',
-    modelPath: '/assets/models/pointer.obj',
+    modelPath: './assets/models/pointer.obj',
     mesh: null,
     color: 0x332211,
     rotation: {

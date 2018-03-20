@@ -53,7 +53,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
 
         let _parameters = {
             skyboxType: 'sphere',
-            texture: '/assets/img/sky.png',
+            texture: './assets/img/sky.png',
             radius: 100,
 
         };

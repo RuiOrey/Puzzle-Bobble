@@ -9,7 +9,7 @@ export const isSkybox = ( object, parameters ) =>
         let _parameters = {
             skyboxType: "sphere",
             // texture: "/assets/img/sky.png",
-            texture: "/assets/img/PIA15482.jpg",
+            texture: "./assets/img/PIA15482.jpg",
             radius: 3000
 
         }
