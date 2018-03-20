@@ -76,7 +76,7 @@ export const isBall = ( gameObject, parameters ) => {
     
     function applyForce(angle,velocity=1) {
         _physicsRepresentation.body.velocity.x = velocity *   Math.cos(angle);
-        _physicsRepresentation.body.velocity.y = velocity *  Math.sin(angle);
+        _physicsRepresentation.body.velocity.y = Math.abs(velocity *  Math.sin(angle));
        // _physicsRepresentation.body.velocity.y += 0.3;
 
     }
