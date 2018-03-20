@@ -71,8 +71,8 @@ export class PhysicsManager extends Component {
             mass: 1,
             position: { x: 0, y: 0, z: 0 },
             dimensions: { x: 1, y: 1, z: 1 },
-            linearFactor: new  CANNON.Vec3(1,1,1),
-            angularFactor: new  CANNON.Vec3(1,1,1)
+            linearFactor: new  CANNON.Vec3(1,1,0),
+            angularFactor: new  CANNON.Vec3(1,1,0)
         };
 
         const _parameters = Object.assign( thisBoxParameters, parameters );
