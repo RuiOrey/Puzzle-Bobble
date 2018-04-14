@@ -132,6 +132,7 @@ function initEventListeners( object, parameters )
           return;
         }
       object.mesh.rotation.z -= parameters.rotation.speed;
+      emitRotation(object.mesh.rotation.z);
     } );
     document.addEventListener( 'moveleft', function() {
       if ( object.mesh.rotation.z - parameters.rotation.initial >
@@ -140,11 +141,17 @@ function initEventListeners( object, parameters )
           return;
         }
       object.mesh.rotation.z += parameters.rotation.speed;
+      emitRotation(object.mesh.rotation.z);
     } );
 
     document.addEventListener( 'shoot', function() {
       animateShoot( object );
     } );
+  }
+
+function emitRotation(rotationValue)
+  {
+    document.dispatchEvent( new CustomEvent( 'shooterRotation',{detail: {rotation:rotationValue}} ) );
   }
 
 let setParentGameObjectTransforms = function( object, _parameters ) {
