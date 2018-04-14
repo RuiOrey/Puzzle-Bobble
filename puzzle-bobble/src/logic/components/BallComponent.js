@@ -14,6 +14,9 @@ export const isBall = ( gameObject, parameters ) => {
     color: 0x00ff00,
   }, {} );
 
+  const linearDamping = 0.00;
+  const angularDamping = 0.00;
+
   const step = config.space;
   const gridGeoRadius = (step - 0.1) / 2;
 
@@ -38,12 +41,19 @@ export const isBall = ( gameObject, parameters ) => {
   const _physicsRepresentation = _physicsManager.addNewSphereBody( _mesh, {
         radius: gridGeoRadius,
         position: getLowerHeightPositionFromBoardDimensions( dimensions ),
-        mass: Math.random() > 0,
+        mass: 10,
         linearFactor: new _physicsManager.Vec3( 1, 1, 0 ),
         angularFactor: new _physicsManager.Vec3( 1, 1, 0 ),
-
+        linearDamping: linearDamping,
+        angularDamping: angularDamping,
       } )
   ;
+
+  // When a body collides with another body, they both dispatch the "collide" event.
+  _physicsRepresentation.body.addEventListener( 'collide', function( e ) {
+    console.log( 'Collided with body:', e.body );
+    console.log( 'Contact between bodies:', e.contact );
+  } );
 
   console.log( _physicsRepresentation.body );
 
@@ -57,16 +67,17 @@ export const isBall = ( gameObject, parameters ) => {
     console.log( _physicsRepresentation.body, _physicsRepresentation.body.type,
         CANNON.Body.DYNAMIC );
     _physicsRepresentation.body.mass = _physicsRepresentation.body.mass === 0 ?
-        50 :
+        1 :
         0;
     _physicsRepresentation.body.type = _physicsRepresentation.body.mass === 0 ?
         CANNON.Body.STATIC :
         CANNON.Body.DYNAMIC;
 
     _physicsRepresentation.body.updateMassProperties();
+
     // _physicsRepresentation.body.invMass=5;
     const rotation = (shooterRotation);
-    applyForce( rotation, 100 );
+    applyForce( rotation, 30 );
   } );
 
   function getLowerHeightPositionFromBoardDimensions( settings )
