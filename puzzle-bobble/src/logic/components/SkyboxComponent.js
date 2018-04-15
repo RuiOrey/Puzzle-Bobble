@@ -10,7 +10,6 @@ export const isSkybox = ( object, parameters ) => {
     // texture: "/assets/img/sky.png",
     texture: './assets/img/PIA15482.jpg',
     radius: 3000,
-
   };
 
   const loader = new THREE.TextureLoader();

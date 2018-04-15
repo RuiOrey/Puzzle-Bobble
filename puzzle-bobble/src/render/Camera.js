@@ -4,11 +4,13 @@ import * as THREE from 'three';
 
 export class Camera extends Component {
 
+    sound;
     attribs = {
         fov: 45,
         aspect: window.innerWidth / window.innerHeight,
         near: .1,
-        far: 10000
+        far: 10000,
+        cameraSoundPath: '/assets/sound/camera_change.mp3'
     };
     mesh = new THREE.PerspectiveCamera( this.attribs.fov, this.attribs.aspect, this.attribs.near, this.attribs.far );
 
@@ -17,6 +19,20 @@ export class Camera extends Component {
             this.setupInitialValues();
             this.setupResize();
         };
+
+  initCameraSound = (sound) => {
+        this.sound = sound;
+    }
+
+      playSound = () => {
+        if (!this.sound){
+          return;
+        }
+        if (this.sound.isPlaying) {
+          this.sound.stop();
+        }
+        this.sound.play();
+      }
 
     setupInitialValues()
         {
@@ -31,7 +47,7 @@ export class Camera extends Component {
         {
             window.addEventListener( "resize", () =>
             {
-                //      console.log( "adjusting camera", this.camera )
+                // console.log( "adjusting camera", this.camera );
                 this.mesh.aspect = window.innerWidth / window.innerHeight;
                 this.mesh.updateProjectionMatrix();
             } );

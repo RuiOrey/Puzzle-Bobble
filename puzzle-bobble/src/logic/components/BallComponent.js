@@ -11,8 +11,12 @@ export const isBall = ( gameObject, parameters ) => {
     height: dimensions.lines,
     width: dimensions.columns,
     space: dimensions.scale,
+    soundLocation: '/assets/sound/shot.wav',
     color: 0x00ff00,
   }, {} );
+
+  const _audioManager = gameObject.props.getAudioManager();
+  const sound = _audioManager.buildPositionalSound( config.soundLocation );
 
   const linearDamping = 0.00;
   const angularDamping = 0.00;
@@ -31,7 +35,7 @@ export const isBall = ( gameObject, parameters ) => {
   _mesh.name = _.uniqueId( 'Ball' );
 
   let shooterRotation = 3.14;
-
+  _mesh.add( sound );
   gameObject.mesh.add( _mesh );
   //
   // _mesh.position.copy(
@@ -55,6 +59,24 @@ export const isBall = ( gameObject, parameters ) => {
 
   document.addEventListener( 'shooterRotation', function( e ) {
     shooterRotation = e.detail.rotation;
+  } );
+
+  _physicsRepresentation.body.addEventListener( 'collide', ( e ) => {
+
+    console.log( e );
+    const _collidedBody = e.contact.bi === _physicsRepresentation.body ?
+        e.contact.bj :
+        e.contact.bi;
+    console.log( _collidedBody );
+    if ( !_collidedBody.mesh.name.includes( 'Border' ) )
+      {
+        return;
+      }
+    if ( sound.isPlaying )
+      {
+        sound.stop();
+      }
+    sound.play();
   } );
 
   document.addEventListener( 'shoot', function() {

@@ -140,9 +140,9 @@ export const isGridBoard = ( gameObject, parameters ) => {
                       mass: 0,
                       position: {x: _sideDisplacement, y: 0, z: 0},
                       dimensions: {
-                        x: dimensions.borderThickness,
-                        y: dimensions.lines * dimensions.scale,
-                        z: dimensions.borderThickness,
+                        x: dimensions.borderThickness / 2,
+                        y: dimensions.lines * dimensions.scale / 2,
+                        z: dimensions.borderThickness / 2,
                       },
                     } )
                 ;
@@ -153,9 +153,9 @@ export const isGridBoard = ( gameObject, parameters ) => {
 
                       position: {x: -_sideDisplacement, y: 0, z: 0},
                       dimensions: {
-                        x: dimensions.borderThickness,
-                        y: dimensions.lines * dimensions.scale,
-                        z: dimensions.borderThickness,
+                        x: dimensions.borderThickness / 2,
+                        y: dimensions.lines * dimensions.scale / 2,
+                        z: dimensions.borderThickness / 2,
                       },
                     } )
                 ;
@@ -167,7 +167,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
                       dimensions: {
                         x: dimensions.columns * dimensions.scale +
                         dimensions.borderThickness * 2,
-                        y: dimensions.borderThickness,
+                        y: dimensions.borderThickness / 2,
                         z: dimensions.borderThickness,
                       },
                     } )
@@ -343,6 +343,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
           `GridPositionSphereX${position.x}Y${position.y}_` );
       this.ball = null;
       _mesh.visible = false;
+      this.debugTween;
       const _physicsRepresentation = _physicsManager.addNewSphereBody( _mesh, {
             radius: radius,
             position: position,
@@ -355,6 +356,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
                 {
                   return;
                 }
+              this.debugTween ? this.debugTween.stop() : null;
               _mesh.material.opacity = 0.5;
               _mesh.visible = true;
 
@@ -364,8 +366,10 @@ export const isGridBoard = ( gameObject, parameters ) => {
                 {
                   return;
                 }
-              const tween = new TWEEN.Tween( _mesh.material ).to( {opacity: 0},
-                  1000 ).
+
+              this.debugTween ? this.debugTween.stop() : null;
+              this.debugTween = new TWEEN.Tween( _mesh.material ).to( {opacity: 0},
+                  10 ).
                   easing( TWEEN.Easing.Elastic.InOut ).
                   onComplete( () => {
                     _mesh.visible = false;

@@ -66,14 +66,25 @@ export class PhysicsManager extends Component {
 
     // The ContactMaterial defines what happens when two materials meet.
     // In this case we want friction coefficient = 0.0 when the slippery material touches ground.
-    const slippery_ground_cm = new CANNON.ContactMaterial( this.groundMaterial,
-        this.slipperyMaterial, {
+    const slippery_ground_cm = new CANNON.ContactMaterial(
+        this.slipperyMaterial, this.groundMaterial,
+        {
+          friction: 0.0,
+          restitution: 1.0,
+          frictionAir: 0.0,
+        } );
+
+    this.world.addContactMaterial( slippery_ground_cm );
+    
+    const slippery_slippery_cm = new CANNON.ContactMaterial(
+        this.slipperyMaterial, this.slipperyMaterial,
+        {
           friction: 0.0,
           restitution: 1.0,
           frictionAir: 0.0,
         } );
     // We must add the contact materials to the world
-    this.world.addContactMaterial( slippery_ground_cm );
+    this.world.addContactMaterial( slippery_slippery_cm );
   };
 
   generateUpdateFunction = ( mesh, body ) => {

@@ -21,14 +21,36 @@ export const isShooter = ( object, parameters ) => {
       scale: 1.1,
       color: 0xffffff,
     },
+    backGroundMusicPath: '/assets/music/14022018beat3.mp3',
+    // backGroundMusicPath: '/assets/music/po.mp3',
   };
 
+  const _audioManager = object.props.getAudioManager();
+  const sound = _audioManager.buildNonPositionalSound(
+      _parameters.backGroundMusicPath );
+
+  const analyser = _audioManager.buildAnalyserFromSound( sound, 32 );
+
   this.THREE = THREE;
+  this.mesh;
+  this.outline;
   const loader = new this.THREE.OBJLoader();
+
+  this.update = () => {
+
+    if ( this.outline )
+      {
+        const newScale = //_parameters.outline.scale +
+            1 +
+            Math.cos( (( analyser.getAverageFrequency() - 125) ) / 10 ) * 0.2;
+        this.outline.scale.set( newScale, newScale, newScale );
+      }
+
+  };
 
   loader.load(
       _parameters.modelPath,
-      function( obj ) {
+      ( obj ) => {
 
         _object.mesh.add( obj );
         changeObjectChildrenMaterialTo( obj,
@@ -46,6 +68,8 @@ export const isShooter = ( object, parameters ) => {
                 {color: _parameters.outline.color, side: THREE.BackSide} ) );
         obj.add( _objOutline );
         state.mesh = obj;
+        this.mesh = obj;
+        this.outline = _objOutline;
 
       },
       function( xhr ) {
@@ -65,6 +89,7 @@ export const isShooter = ( object, parameters ) => {
 
   let state = {
     mesh: _parameters.mesh,
+    update: this.update,
   };
 
   return {
@@ -132,7 +157,7 @@ function initEventListeners( object, parameters )
           return;
         }
       object.mesh.rotation.z -= parameters.rotation.speed;
-      emitRotation(object.mesh.rotation.z);
+      emitRotation( object.mesh.rotation.z );
     } );
     document.addEventListener( 'moveleft', function() {
       if ( object.mesh.rotation.z - parameters.rotation.initial >
@@ -141,7 +166,7 @@ function initEventListeners( object, parameters )
           return;
         }
       object.mesh.rotation.z += parameters.rotation.speed;
-      emitRotation(object.mesh.rotation.z);
+      emitRotation( object.mesh.rotation.z );
     } );
 
     document.addEventListener( 'shoot', function() {
@@ -149,9 +174,10 @@ function initEventListeners( object, parameters )
     } );
   }
 
-function emitRotation(rotationValue)
+function emitRotation( rotationValue )
   {
-    document.dispatchEvent( new CustomEvent( 'shooterRotation',{detail: {rotation:rotationValue}} ) );
+    document.dispatchEvent( new CustomEvent( 'shooterRotation',
+        {detail: {rotation: rotationValue}} ) );
   }
 
 let setParentGameObjectTransforms = function( object, _parameters ) {
