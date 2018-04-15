@@ -22,6 +22,7 @@ export class Camera extends Component {
     };
 
   initCameraSound = ( sound ) => {
+    this.mesh.add( sound );
     this.sound = sound;
   };
 

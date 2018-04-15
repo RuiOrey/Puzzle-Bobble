@@ -119,6 +119,7 @@ export class Renderer extends Component {
     if ( this.camera && this.audioManager )
       {
         this.camera.add( this.audioManager.listener );
+
         const _sound = this.audioManager.buildPositionalSound(
             this.cameraComponent.attribs.cameraSoundPath );
         this.cameraComponent.initCameraSound( _sound );
