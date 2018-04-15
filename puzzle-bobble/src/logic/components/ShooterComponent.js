@@ -21,7 +21,7 @@ export const isShooter = ( object, parameters ) => {
       scale: 1.1,
       color: 0xffffff,
     },
-    backGroundMusicPath: '/assets/music/14022018beat3.mp3',
+    backGroundMusicPath: './assets/music/14022018beat3.mp3',
     // backGroundMusicPath: '/assets/music/po.mp3',
   };
 

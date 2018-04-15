@@ -11,7 +11,7 @@ export const isBall = ( gameObject, parameters ) => {
     height: dimensions.lines,
     width: dimensions.columns,
     space: dimensions.scale,
-    soundLocation: '/assets/sound/shot.wav',
+    soundLocation: './assets/sound/shot.wav',
     color: 0x00ff00,
   }, {} );
 
