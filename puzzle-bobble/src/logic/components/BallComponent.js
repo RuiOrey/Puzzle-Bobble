@@ -1,4 +1,4 @@
-import TWEEN from '@tweenjs/tween.js';
+import * as _ from 'lodash';
 
 import {dimensions} from '../../settings';
 import * as THREE from 'three';
@@ -28,6 +28,7 @@ export const isBall = ( gameObject, parameters ) => {
     transparent: true,
   } );
   const _mesh = new THREE.Mesh( gridGeo, material );
+  _mesh.name = _.uniqueId( 'Ball' );
 
   let shooterRotation = 3.14;
 
@@ -41,19 +42,14 @@ export const isBall = ( gameObject, parameters ) => {
   const _physicsRepresentation = _physicsManager.addNewSphereBody( _mesh, {
         radius: gridGeoRadius,
         position: getLowerHeightPositionFromBoardDimensions( dimensions ),
-        mass: 10,
+        mass: 0,
+        type: CANNON.Body.DYNAMIC,
         linearFactor: new _physicsManager.Vec3( 1, 1, 0 ),
         angularFactor: new _physicsManager.Vec3( 1, 1, 0 ),
         linearDamping: linearDamping,
         angularDamping: angularDamping,
       } )
   ;
-
-  // When a body collides with another body, they both dispatch the "collide" event.
-  _physicsRepresentation.body.addEventListener( 'collide', function( e ) {
-    console.log( 'Collided with body:', e.body );
-    console.log( 'Contact between bodies:', e.contact );
-  } );
 
   console.log( _physicsRepresentation.body );
 
@@ -64,8 +60,7 @@ export const isBall = ( gameObject, parameters ) => {
   document.addEventListener( 'shoot', function() {
     _physicsRepresentation.body.position.copy(
         _physicsRepresentation.body.initPosition );
-    console.log( _physicsRepresentation.body, _physicsRepresentation.body.type,
-        CANNON.Body.DYNAMIC );
+    // console.log( _physicsRepresentation.body, _physicsRepresentation.body.type, CANNON.Body.DYNAMIC );
     _physicsRepresentation.body.mass = _physicsRepresentation.body.mass === 0 ?
         1 :
         0;
@@ -95,13 +90,13 @@ export const isBall = ( gameObject, parameters ) => {
     {
     }
 
-  function update( id )
-    {
-      _physicsRepresentation.update();
-    }
+  const update = ( id ) => {
+    _physicsRepresentation.update();
+  };
 
   function applyForce( angle, velocity = 1 )
     {
+      console.log( _physicsRepresentation.body );
       _physicsRepresentation.body.velocity.y = velocity * (-Math.cos( angle ));
       _physicsRepresentation.body.velocity.x = velocity *
           Math.sin( angle );

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import * as CANNON from 'cannon';
+import * as _ from 'lodash';
 
 export class PhysicsManager extends Component {
 
@@ -16,8 +17,34 @@ export class PhysicsManager extends Component {
   TimeOfLastUpdateCallInMilliseconds;
 
   componentDidMount = () => {
-    this.slipperyMaterial.restitution = 0.0;
+    this.slipperyMaterial.restitution = 1.0;
+    this.slipperyMaterial.frictionAir = 0.0;
+    this.slipperyMaterial.friction = 0.0;
     this.initMaterials();
+    this.initContactEvents();
+  };
+
+  initContactEvents = () => {
+
+    this.world.addEventListener( 'beginContact', function( e ) {
+      // console.log( `Collided with ${e.body.mesh.name}'s body:`, e );
+
+      // console.log( `Contact between ${e.bodyA.mesh.name} and ${e.bodyB.mesh.name} bodies began:`,          e.bodyA, e.bodyB, e );
+
+      e.bodyA.beginContactFunction ?
+          e.bodyA.beginContactFunction( e.bodyB ) :
+          null;
+      e.bodyB.beginContactFunction ?
+          e.bodyB.beginContactFunction( e.bodyA ) :
+          null;
+
+    } );
+    this.world.addEventListener( 'endContact', function( e ) {
+      // console.log( `Collided with ${e.body.mesh.name}'s body:`, e );
+      // console.log( `Contact between ${e.bodyA.mesh.name} and ${e.bodyB.mesh.name} bodies end:`,          e.bodyA, e.bodyB, e );
+      e.bodyA.endContactFunction ? e.bodyA.endContactFunction( e.bodyB ) : null;
+      e.bodyB.endContactFunction ? e.bodyB.endContactFunction( e.bodyA ) : null;
+    } );
   };
 
   initMaterials = () => {
@@ -41,8 +68,9 @@ export class PhysicsManager extends Component {
     // In this case we want friction coefficient = 0.0 when the slippery material touches ground.
     const slippery_ground_cm = new CANNON.ContactMaterial( this.groundMaterial,
         this.slipperyMaterial, {
-          friction: 0,
+          friction: 0.0,
           restitution: 1.0,
+          frictionAir: 0.0,
         } );
     // We must add the contact materials to the world
     this.world.addContactMaterial( slippery_ground_cm );
@@ -51,13 +79,13 @@ export class PhysicsManager extends Component {
   generateUpdateFunction = ( mesh, body ) => {
 
     return function updateFunction() {
-      mesh.position.x = body.position.x;
-      mesh.position.y = body.position.y;
-      mesh.position.z = body.position.z;
-      mesh.quaternion.x = body.quaternion.x;
-      mesh.quaternion.y = body.quaternion.y;
-      mesh.quaternion.z = body.quaternion.z;
-      mesh.quaternion.w = body.quaternion.w;
+      body.mesh.position.x = body.position.x;
+      body.mesh.position.y = body.position.y;
+      body.mesh.position.z = body.position.z;
+      body.mesh.quaternion.x = body.quaternion.x;
+      body.mesh.quaternion.y = body.quaternion.y;
+      body.mesh.quaternion.z = body.quaternion.z;
+      body.mesh.quaternion.w = body.quaternion.w;
     };
   };
 
@@ -102,10 +130,14 @@ export class PhysicsManager extends Component {
       } );
       this.world.addBody( _sphereBody );
 
+      _sphereBody.beginContactFunction = parameters.beginContactFunction;
+      _sphereBody.endContactFunction = parameters.endContactFunction;
+
       // _sphereBody.addEventListener( "collide", function ( event ) {
       //     console.log( "[Body] - collide: ", event );
       // } )
 
+      _sphereBody.mesh = mesh;
       const _updateFunction = this.generateUpdateFunction( mesh, _sphereBody );
 
       return {
@@ -143,7 +175,11 @@ export class PhysicsManager extends Component {
 
       this.world.addBody( _boxBody );
 
+      _boxBody.mesh = mesh;
       const _updateFunction = this.generateUpdateFunction( mesh, _boxBody );
+
+      _boxBody.beginContactFunction = parameters.beginContactFunction;
+      _boxBody.endContactFunction = parameters.endContactFunction;
 
       return {body: _boxBody, update: _updateFunction, parameters: _parameters};
     }

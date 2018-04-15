@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import {dimensions} from '../../settings';
+import * as _ from 'lodash';
+import TWEEN from '@tweenjs/tween.js';
 
 export const isGridBoard = ( gameObject, parameters ) => {
 
@@ -126,6 +128,9 @@ export const isGridBoard = ( gameObject, parameters ) => {
                 _border.top.mesh.position.set( 0, _topDisplacement, 0 );
                 _grid.add( border );
 
+                _border.right.mesh.name = _.uniqueId( 'Border_right' );
+                _border.top.mesh.name = _.uniqueId( 'Border_top' );
+                _border.left.mesh.name = _.uniqueId( 'Border_left' );
                 // physics
 
                 const _physicsManager = gameObject.props.getPhysicsManager();
@@ -212,12 +217,17 @@ export const isGridBoard = ( gameObject, parameters ) => {
         dimensions.scale, dimensions.lines * dimensions.scale );
     //planeGeometry.rotateX( -Math.PI / 2 );
     const planeMaterial = new THREE.MeshPhongMaterial( {
-      opacity: 0.8, transparent: true, depthWrite: false, color: 0xff0000,
+      opacity: 0.8,
+      transparent: false,
+      depthWrite: false,
+      color: 0xff0000,
     } );
     const plane = new THREE.Mesh( planeGeometry, planeMaterial );
     plane.receiveShadow = true;
     plane.material.transparent = true;
+    plane.visible = false;
     plane.renderOrder = 100;
+
     return plane;
   };
 
@@ -306,6 +316,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
                   gridGeoRadius, _position );
               _heightArray.push( newGridPosition );
               gridObject.add( newGridPosition.mesh );
+
               //  newGridPosition.mesh.position.set( x, y, 0 );
             }
           _gridArray.push( _heightArray );
@@ -319,15 +330,19 @@ export const isGridBoard = ( gameObject, parameters ) => {
 
   function GridPosition( geometry, color, radius, position )
     {
+
       const _physicsManager = gameObject.props.getPhysicsManager();
       const material = new THREE.MeshBasicMaterial( {
-
         color: color,
-        opacity: 0.5,
+        opacity: 0,
         transparent: true,
+        side: THREE.DoubleSide,
       } );
       const _mesh = new THREE.Mesh( geometry, material );
+      _mesh.name = _.uniqueId(
+          `GridPositionSphereX${position.x}Y${position.y}_` );
       this.ball = null;
+      _mesh.visible = false;
       const _physicsRepresentation = _physicsManager.addNewSphereBody( _mesh, {
             radius: radius,
             position: position,
@@ -335,8 +350,31 @@ export const isGridBoard = ( gameObject, parameters ) => {
             linearFactor: new _physicsManager.Vec3( 1, 1, 0 ),
             angularFactor: new _physicsManager.Vec3( 1, 1, 0 ),
             type: 'kinematic',
+            beginContactFunction: ( body2 ) => {
+              if ( body2.mesh.name.includes( 'Border' ) )
+                {
+                  return;
+                }
+              _mesh.material.opacity = 0.5;
+              _mesh.visible = true;
+
+            },
+            endContactFunction: ( body2 ) => {
+              if ( body2.mesh.name.includes( 'Border' ) )
+                {
+                  return;
+                }
+              const tween = new TWEEN.Tween( _mesh.material ).to( {opacity: 0},
+                  1000 ).
+                  easing( TWEEN.Easing.Elastic.InOut ).
+                  onComplete( () => {
+                    _mesh.visible = false;
+                  } ).
+                  start();
+            },
           } )
       ;
+
       _physicsRepresentation.body.collisionResponse = 0;
       let _returnObject = {
         get mesh() {
@@ -347,8 +385,9 @@ export const isGridBoard = ( gameObject, parameters ) => {
           _mesh.material.color = new THREE.Color( this.state[state].color );
         },
         set visible( value ) {
-          _mesh.material.tranparent = value;
+          // _mesh.material.tranparent = value;
           _mesh.material.opacity = value ? 0.6 : 0.0;
+          _mesh.visible = value;
         },
         physicsObject: _physicsRepresentation,
       };
