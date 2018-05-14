@@ -294,18 +294,20 @@ export const isGridBoard = ( gameObject, parameters ) => {
           height = config.space * (config.height / 2),
           step = config.space;
 
+
       // const gridGeo = new THREE.BoxGeometry( step - 0.1, step - 0.1 );
-      const gridGeoRadius = (step - 0.1) / 2;
+      const gridGeoRadius = (step) / 2;
+       const ystep = Math.sqrt(3*( gridGeoRadius*gridGeoRadius ));
       const gridGeo = new THREE.SphereGeometry( gridGeoRadius );
 
       let _currentLine = 0;
       //for each line
-      for ( let y = -height + step / 2; y <= height - step / 2; y += step )
+      for ( let y = -height + step / 2; y <= height - ystep / 2; y += ystep )
         {
           let _heightArray = [];
           const _currentLineIsEven = _currentLine === 0 || _currentLine % 2 ===
               0;
-          const _offset = _currentLineIsEven ? step / 2 : 0;
+          const _offset = !_currentLineIsEven ? step / 2 : 0;
           console.log( _offset );
           _currentLine++;
           for ( let x = -width + (step / 2) + _offset; x <=
