@@ -174,14 +174,6 @@ export class Renderer extends Component {
     return this.physicsManager;
   };
 
-  setGameDirector = ( gameDirector ) => {
-
-    this.gameDirector = gameDirector;
-  };
-
-  getGameDirector = () => {
-    return this.gameDirector;
-  };
 
   setAudioManager = ( audioManager ) => {
     this.audioManager = audioManager;
@@ -207,9 +199,7 @@ export class Renderer extends Component {
       _children.push( <PhysicsManager
           ref={physicsManager => this.setPhysics( physicsManager )}
           key="physicsManager"></PhysicsManager> );
-      _children.push( <GameDirector
-          ref={gameDirector => this.setGameDirector( gameDirector )}
-          key="gameDirector"></GameDirector> );
+
       _children.push( <Scene getPhysicsManager={this.getPhysicsManager}
                              getGameDirector={this.getGameDirector}
                              getAudioManager={this.getAudioManager}

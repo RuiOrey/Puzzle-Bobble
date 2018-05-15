@@ -15,8 +15,7 @@ class App extends Component {
               <h1 className="App-title">Puzzle Bobble 3D WebGL</h1>
 
               <p>by Rui d'Orey</p>
-              <p>keys: [c] - change camera [space] - shoot [arrow left & right]
-                 - change shooter orientation</p>
+              <p>keys: [r]:restart  [c]:camera  [space]:shoot  [arrow left & right]:change shooter orientation</p>
             </header>
             <p className="App-intro">
               To get started, edit <code>src/App.js</code> and save to reload.

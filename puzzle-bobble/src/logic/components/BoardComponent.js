@@ -340,7 +340,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
       this.collides = false;
       this.attaches = true;
       const _physicsManager = gameObject.props.getPhysicsManager();
-      const material = new THREE.MeshBasicMaterial( {
+      const material = new THREE.MeshPhongMaterial( {
         color: color,
         opacity: 0,
         transparent: true,
@@ -432,7 +432,6 @@ export const isGridBoard = ( gameObject, parameters ) => {
     ready: {color: 0x00ff00,visible:true,opacity:0.9},
     trespassing: {color: 0xff0000,visible:true,opacity:0.9},
     occupied: {color: 0x000000,visible:true,opacity:0.9},
-
   };
 
   const update = ( id ) => {

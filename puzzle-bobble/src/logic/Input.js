@@ -6,7 +6,7 @@ export class Input extends Component {
     {
 
       document.addEventListener( 'keydown', function( event ) {
-        console.log( 'Pressed: ', event.keyCode );
+        // console.log( 'Pressed: ', event.keyCode );
 
         if ( event.key === 'ArrowLeft' )
           {
@@ -23,12 +23,20 @@ export class Input extends Component {
             ;
           }
 
-        if ( event.keyCode === 32 )
+        if ( event.key === 'r' )
+          {
+            document.dispatchEvent( new Event( 'restartGame' )
+
+            )
+            ;
+          }
+
+        if ( event.key === ' ')
           {
             document.dispatchEvent( new Event( 'shoot' ) );
           }
 
-        if ( event.keyCode === 67 )
+        if ( event.key === 'c' )
           {
             document.dispatchEvent( new Event( 'camera_change' ) );
           }
