@@ -106,7 +106,7 @@ export class PhysicsManager extends Component {
 
   typeEnum = Object.freeze( {'kinematic': CANNON.Body.KINEMATIC} );
 
-  addNewSphereBody( mesh, parameters )
+  addNewSphereBody( mesh, parameters,instance )
     {
 
       let thisSphereParameters = {
@@ -149,6 +149,7 @@ export class PhysicsManager extends Component {
       // } )
 
       _sphereBody.mesh = mesh;
+      _sphereBody.instance = instance;
       const _updateFunction = this.generateUpdateFunction( mesh, _sphereBody );
 
       return {
@@ -158,7 +159,7 @@ export class PhysicsManager extends Component {
       };
     }
 
-  addNewBoxBody( mesh, parameters )
+  addNewBoxBody( mesh, parameters,instance )
     {
 
       let thisBoxParameters = {
@@ -187,6 +188,7 @@ export class PhysicsManager extends Component {
       this.world.addBody( _boxBody );
 
       _boxBody.mesh = mesh;
+      _boxBody.instance = instance;
       const _updateFunction = this.generateUpdateFunction( mesh, _boxBody );
 
       _boxBody.beginContactFunction = parameters.beginContactFunction;

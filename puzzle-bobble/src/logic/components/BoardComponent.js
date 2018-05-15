@@ -112,6 +112,9 @@ export const isGridBoard = ( gameObject, parameters ) => {
                 _border.right.mesh.scale.y = -1;
                 _border.top.mesh.scale.y = -1;
 
+
+                _border.top.collides = true;
+
                 const _sideDisplacement = 0.5 * dimensions.columns *
                     dimensions.scale + dimensions.borderThickness / 2;
 
@@ -144,7 +147,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
                         y: dimensions.lines * dimensions.scale / 2,
                         z: dimensions.borderThickness / 2,
                       },
-                    } )
+                    },_border.left )
                 ;
 
                 _border.right.physicsObject = _physicsManager.addNewBoxBody(
@@ -157,7 +160,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
                         y: dimensions.lines * dimensions.scale / 2,
                         z: dimensions.borderThickness / 2,
                       },
-                    } )
+                    },_border.right )
                 ;
 
                 _border.top.physicsObject = _physicsManager.addNewBoxBody(
@@ -170,7 +173,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
                         y: dimensions.borderThickness / 2,
                         z: dimensions.borderThickness,
                       },
-                    } )
+                    },_border.top )
                 ;
 
                 _border.back = {};
@@ -258,12 +261,13 @@ export const isGridBoard = ( gameObject, parameters ) => {
           step = config.space;
 
       //width
-      for ( let i = -width; i <= width; i += step / 2 )
-        {
-          gridGeo.vertices.push( new THREE.Vector3( i, -height, 0 ) );
-          gridGeo.vertices.push( new THREE.Vector3( i, height, 0 ) );
+      // for ( let i = -width; i <= width; i += step / 2 )
+      //   {
+      //     gridGeo.vertices.push( new THREE.Vector3( i, -height, 0 ) );
+      //     gridGeo.vertices.push( new THREE.Vector3( i, height, 0 ) );
+      //
+      //   }
 
-        }
       //height
       for ( let i = -height; i <= height; i += step )
         {
@@ -302,7 +306,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
 
       let _currentLine = 0;
       //for each line
-      for ( let y = -height + step / 2; y <= height - ystep / 2; y += ystep )
+      for ( let y = -height; y <= height - ystep / 2; y += ystep )
         {
           let _heightArray = [];
           const _currentLineIsEven = _currentLine === 0 || _currentLine % 2 ===
@@ -333,6 +337,8 @@ export const isGridBoard = ( gameObject, parameters ) => {
   function GridPosition( geometry, color, radius, position )
     {
 
+      this.collides = false;
+      this.attaches = true;
       const _physicsManager = gameObject.props.getPhysicsManager();
       const material = new THREE.MeshBasicMaterial( {
         color: color,
@@ -354,59 +360,78 @@ export const isGridBoard = ( gameObject, parameters ) => {
             angularFactor: new _physicsManager.Vec3( 1, 1, 0 ),
             type: 'kinematic',
             beginContactFunction: ( body2 ) => {
-              if ( body2.mesh.name.includes( 'Border' ) )
-                {
-                  return;
-                }
-              this.debugTween ? this.debugTween.stop() : null;
-              _mesh.material.opacity = 0.5;
-              _mesh.visible = true;
+              // if ( body2.mesh.name.includes( 'Border' ) )
+              //   {
+              //     return;
+              //   }
+              // this.debugTween ? this.debugTween.stop() : null;
+              // _mesh.material.opacity = 0.5;
+              // // _mesh.visible = true;
 
             },
             endContactFunction: ( body2 ) => {
-              if ( body2.mesh.name.includes( 'Border' ) )
-                {
-                  return;
-                }
-
-              this.debugTween ? this.debugTween.stop() : null;
-              this.debugTween = new TWEEN.Tween( _mesh.material ).to( {opacity: 0},
-                  10 ).
-                  easing( TWEEN.Easing.Elastic.InOut ).
-                  onComplete( () => {
-                    _mesh.visible = false;
-                  } ).
-                  start();
+              // if ( body2.mesh.name.includes( 'Border' ) )
+              //   {
+              //     return;
+              //   }
+              //
+              // this.debugTween ? this.debugTween.stop() : null;
+              // this.debugTween = new TWEEN.Tween( _mesh.material ).to( {opacity: 0},
+              //     10 ).
+              //     easing( TWEEN.Easing.Elastic.InOut ).
+              //     onComplete( () => {
+              //        _mesh.visible = false;
+              //     } ).
+              //     start();
             },
-          } )
+          } ,
+          this
+          )
       ;
 
       _physicsRepresentation.body.collisionResponse = 0;
-      let _returnObject = {
-        get mesh() {
-          return _mesh;
-        },
-        activate: ( state, ball ) => {
-          this.ball = ball ? ball : null;
-          _mesh.material.color = new THREE.Color( this.state[state].color );
-        },
-        set visible( value ) {
-          // _mesh.material.tranparent = value;
-          _mesh.material.opacity = value ? 0.6 : 0.0;
-          _mesh.visible = value;
-        },
-        physicsObject: _physicsRepresentation,
-      };
 
-      _returnObject.prototype = GridPosition.prototype;
-      return _returnObject;
+        Object.defineProperty(this, "mesh", {
+            get() {
+                return _mesh;
+            }
+        });
+
+        Object.defineProperty(this, "visible", {
+            set(value) {
+                // _mesh.material.tranparent = value;
+                _mesh.material.opacity = value ? 0.6 : 0.0;
+                _mesh.visible = value;
+            }
+        });
+
+        this.activate = ( state, ball ) => {
+          this.ball = ball ? ball : null;
+          _mesh.material.color = new THREE.Color( state.color );
+          _mesh.visible = state.visible;
+          _mesh.material.opacity = state.opacity;
+          this.collides=true;
+        };
+
+        this.deactivate = (  ) => {
+          this.ball = null;
+          _mesh.material.color = new THREE.Color( 0x000000 );
+          _mesh.visible = false;
+          _mesh.material.opacity = 0;
+          this.collides=false;
+        };
+
+        this.physicsObject= _physicsRepresentation;
+
+      return this;
     }
 
+    //TODO: should go to game director
   GridPosition.prototype.state = {
-    inactive: {color: 0x0000ff},
-    ready: {color: 0x00ff00},
-    trespassing: {color: 0xff0000},
-    occupied: {color: 0x000000},
+    inactive: {color: 0x0000ff,visible:true,opacity:0.9},
+    ready: {color: 0x00ff00,visible:true,opacity:0.9},
+    trespassing: {color: 0xff0000,visible:true,opacity:0.9},
+    occupied: {color: 0x000000,visible:true,opacity:0.9},
 
   };
 
@@ -434,6 +459,7 @@ export const isGridBoard = ( gameObject, parameters ) => {
   };
 
   const randomColorBox = () => {
+
     let _randomSlotLineID = Math.floor( Math.random() *
         (_gridArray.length ) );
     let _randomSlotColumnID = Math.floor( Math.random() *
@@ -441,11 +467,12 @@ export const isGridBoard = ( gameObject, parameters ) => {
 
     const _stateID = Object.keys( GridPosition.prototype.state );
 
-    let _randomState = Math.floor( Math.random() *
-        (_stateID.length ) );
-
-    _gridArray[_randomSlotLineID][_randomSlotColumnID].activate(
-        _stateID[_randomState] );
+    let _randomState = Math.floor(
+        Math.random() * (_stateID.length )
+    );
+    //
+    // _gridArray[_randomSlotLineID][_randomSlotColumnID]
+    //     .activate( _stateID[_randomState] );
   };
 
   let state = {

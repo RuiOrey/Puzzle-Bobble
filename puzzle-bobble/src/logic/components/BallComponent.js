@@ -5,6 +5,7 @@ import * as THREE from 'three';
 
 // remove this
 import * as CANNON from 'cannon';
+import TWEEN from "@tweenjs/tween.js/src/Tween";
 
 export const isBall = ( gameObject, parameters ) => {
   const config = Object.assign( {
@@ -17,6 +18,7 @@ export const isBall = ( gameObject, parameters ) => {
 
   const _audioManager = gameObject.props.getAudioManager();
   const sound = _audioManager.buildPositionalSound( config.soundLocation );
+  let bodiesInCollision = [];
 
   const linearDamping = 0.00;
   const angularDamping = 0.00;
@@ -52,50 +54,92 @@ export const isBall = ( gameObject, parameters ) => {
         angularFactor: new _physicsManager.Vec3( 1, 1, 0 ),
         linearDamping: linearDamping,
         angularDamping: angularDamping,
-      } )
+      beginContactFunction: ( body2 ) => {
+        bodiesInCollision.push(body2.instance);
+
+    },
+        endContactFunction: ( body2 ) => {
+        bodiesInCollision = bodiesInCollision
+            .filter((bodyCollided) => bodyCollided !== body2.instance)
+    },
+      },gameObject )
   ;
 
   console.log( _physicsRepresentation.body );
 
-  document.addEventListener( 'shooterRotation', function( e ) {
+
+
+  document.addEventListener( 'shooterRotation', ( e ) =>{
     shooterRotation = e.detail.rotation;
   } );
 
   _physicsRepresentation.body.addEventListener( 'collide', ( e ) => {
 
-    console.log( e );
-    const _collidedBody = e.contact.bi === _physicsRepresentation.body ?
-        e.contact.bj :
-        e.contact.bi;
-    console.log( _collidedBody );
-    if ( !_collidedBody.mesh.name.includes( 'Border' ) )
-      {
-        return;
+      // console.log( e );
+      const _collidedBody = e.contact.bi === _physicsRepresentation.body ?
+          e.contact.bj :
+          e.contact.bi;
+      // console.log( _collidedBody );
+      if ( _collidedBody.mesh.name.includes( 'Border' ) ) {
+
+
+      if ( sound.isPlaying ) {
+          sound.stop();
       }
-    if ( sound.isPlaying )
-      {
-        sound.stop();
+      sound.play();
       }
-    sound.play();
+
+      if (_collidedBody.instance.collides){
+        // console.log(_collidedBody.instance,bodiesInCollision);
+        let _nearestBall;
+          let positionToAttach = bodiesInCollision
+              .filter((candidateElementToAttach) => (candidateElementToAttach !== _collidedBody.instance && candidateElementToAttach.attaches && !candidateElementToAttach.collides))
+              .forEach((candidateElementToAttach) =>{
+                            // console.log(candidateElementToAttach,candidateElementToAttach !== _collidedBody.instance ,candidateElementToAttach.attaches,!candidateElementToAttach.collides);
+                            if (_nearestBall === undefined) {_nearestBall = candidateElementToAttach;return}
+                            else {
+                                 const _distanceCandidateBall = candidateElementToAttach.mesh.getWorldPosition().distanceTo(_mesh.getWorldPosition());
+                                 const _distanceActualNearestBall = _nearestBall.mesh.getWorldPosition().distanceTo(_mesh.getWorldPosition());
+                                _nearestBall= _distanceCandidateBall < _distanceActualNearestBall ? candidateElementToAttach : _nearestBall;
+                            }
+
+          });
+          // console.log(_nearestBall);
+          _nearestBall.activate({color: 0xffffff,visible:true,opacity:0.9});
+          this.returnToShooter();
+      }
   } );
 
-  document.addEventListener( 'shoot', function() {
-    _physicsRepresentation.body.position.copy(
-        _physicsRepresentation.body.initPosition );
-    // console.log( _physicsRepresentation.body, _physicsRepresentation.body.type, CANNON.Body.DYNAMIC );
-    _physicsRepresentation.body.mass = _physicsRepresentation.body.mass === 0 ?
-        1 :
-        0;
-    _physicsRepresentation.body.type = _physicsRepresentation.body.mass === 0 ?
-        CANNON.Body.STATIC :
-        CANNON.Body.DYNAMIC;
+  document.addEventListener( 'shoot', () =>{
+    const _ballIsMoving = _physicsRepresentation.body.mass === 1;
 
-    _physicsRepresentation.body.updateMassProperties();
+    if (_ballIsMoving) {
+        // this.returnToShooter();
+    }
+    else {
+        this.shoot();
+    }
 
-    // _physicsRepresentation.body.invMass=5;
-    const rotation = (shooterRotation);
-    applyForce( rotation, 30 );
   } );
+
+  this.shoot = ()=> {
+      _physicsRepresentation.body.mass = 1;
+      _physicsRepresentation.body.type = CANNON.Body.DYNAMIC;
+
+      _physicsRepresentation.body.updateMassProperties();
+
+      // _physicsRepresentation.body.invMass=5;
+      const rotation = (shooterRotation);
+      applyForce( rotation, 30 );
+  }
+
+  this.returnToShooter = () => {
+      _physicsRepresentation.body.position.copy(
+          _physicsRepresentation.body.initPosition );
+      _physicsRepresentation.body.mass = 0;
+      _physicsRepresentation.body.type = CANNON.Body.STATIC ;
+      _physicsRepresentation.body.updateMassProperties();
+  }
 
   function getLowerHeightPositionFromBoardDimensions( settings )
     {
@@ -113,6 +157,7 @@ export const isBall = ( gameObject, parameters ) => {
     }
 
   const update = ( id ) => {
+    // console.log(bodiesInCollision);
     _physicsRepresentation.update();
   };
 
